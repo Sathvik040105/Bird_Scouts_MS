@@ -49,7 +49,7 @@ else:
 
     # Displaying the image sent by user
     with st.chat_message("user"):
-        _, center_col, _ = st.columns([1, 2,1])
+        _, center_col, _ = st.columns([1, 2, 1])
         center_col.write(img)
 
     # Bot response
