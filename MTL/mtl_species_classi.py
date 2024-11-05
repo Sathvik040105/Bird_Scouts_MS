@@ -90,7 +90,7 @@ def mtl_species_classi(file_path):
     model_infer = MultiTaskModel(num_species_classes, num_order_classes, num_family_classes).to(device)
 
     # Load the state dictionary from the file
-    state_dict = torch.load("MTL/best_species_model.weights.pth", map_location=device)
+    state_dict = torch.load("MTL/best_species_model.weights_new.pth", map_location=device)
     model_infer.load_state_dict(state_dict)
 
     # Set the model to evaluation mode
