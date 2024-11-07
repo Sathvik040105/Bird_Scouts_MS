@@ -19,7 +19,7 @@ from torchaudio.transforms import Resample
 import torchaudio.transforms as T
 import warnings
 warnings.filterwarnings("ignore")
-from data import species, num_species_classes, common_names, orders, num_order_classes, family, num_family_classes
+from MTL.data import species, num_species_classes, common_names, orders, num_order_classes, family, num_family_classes
 
 def mtl_species_classi(file_path):
     # Check if GPU is available and set the device accordingly
@@ -164,4 +164,4 @@ def mtl_species_classi(file_path):
     common_name = common_names[final_pred]
     return common_name
 
-print(mtl_species_classi("MTL/1003342351.ogg"))
+# print(mtl_species_classi("MTL/1003342351.ogg"))

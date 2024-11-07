@@ -42,7 +42,7 @@ with st.sidebar:
 
     # Render the history
     for i, chat in enumerate(st.session_state["history"]):
-        if hist.button(f"Chat {i}", args=(i,)):
+        if hist.button(f"Chat {i}"):
             st.session_state["show_chat"] = i
 
 

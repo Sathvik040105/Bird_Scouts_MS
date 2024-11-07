@@ -2,6 +2,8 @@ import streamlit as st
 from PIL import Image
 from image.species_from_image import get_species_from_image
 from llm.generate_info import get_llm_response
+from MTL.mtl_species_classi import mtl_species_classi
+
 
 # Function to handle user prompt
 def user_submits_prompt():
@@ -18,15 +20,9 @@ def user_submits_prompt():
     st.session_state["history"][i].append({"type": "bot", "convo": information})
 
 
-# Below statement is only for debugging purposes
-st.write("written from result.py")
-
-
-# Checking if the user wants to see a previous chat
-if st.session_state.get("show_chat", -1) != -1:
+def show_previous_history():
     i = st.session_state["show_chat"]
     st.session_state["show_chat"] = -1
-    st.session_state["last_chat"] = i
 
     for chat in st.session_state["history"][i]:
         with st.chat_message(chat["type"]):
@@ -38,31 +34,86 @@ if st.session_state.get("show_chat", -1) != -1:
             else:
                 st.write(chat["convo"])
 
-# If user ended up at result page without wanting to see a previous chat
-# Then he must have uploaded a file
-else:
-    st.session_state["last_chat"] = len(st.session_state["history"])
+def get_info_from_species(species):
+    return get_llm_response("Write brief introduction about: "+ species)
+
+def show_image_and_gen():
     img = Image.open(st.session_state["file_uploaded"])
-    st.session_state["file_uploaded"] = None
     img = img.resize((300, 300))
     species = get_species_from_image(img)
 
-    # Displaying the image sent by user
+    # Displaying the image
     with st.chat_message("user"):
-        _, center_col, _ = st.columns([1, 2, 1])
+        _, center_col, _  = st.columns([1, 2, 1])
         center_col.write(img)
 
-    # Bot response
-    with st.chat_message("bot"):
-        # Showing the spinning animation till the information is generated
-        with st.spinner("Generating information..."):
-            information = get_llm_response("Write brief introduction about " + species)
-        full_response = st.write_stream(information)
+    info = get_info_from_species(species)
+    info = st.write_stream(info)
 
-    # Adding the current chat to the history
-    user_chat = {"type": "user", "image": True, "convo": img}
-    bot_chat = {"type": "bot", "convo": full_response}
-    st.session_state["history"].append([user_chat, bot_chat])
+    st.session_state["history"].append([])
+    st.session_state["history"][-1].append({
+        "type": "user",
+        "convo": img
+    })
+    st.session_state["history"][-1].append({
+        "type": "bot",
+        "convo": info
+    })
+
+def show_audio_and_gen():
+    audio = None
+    species = "Sparrow" 
+
+    # Display the melspectogram
+    st.write("Mel spectrogram here")
+
+    info = get_info_from_species(species)
+    info = st.write_stream(info)
+
+    st.session_state["history"].append([])
+    st.session_state["history"][-1].append({
+        "type": "user",
+        "convo": audio 
+    })
+    st.session_state["history"][-1].append({
+        "type": "bot",
+        "convo": info
+    })
+
+
+
+############################ PAGE LOGIC STARTS HERE ###################################
+
+
+
+# Below statement is only for debugging purposes
+st.write("written from result.py")
+
+
+# Checking if the user wants to see a previous chat
+if st.session_state["show_chat"] != -1:
+    st.session_state["last_chat"] = st.session_state["show_chat"]
+    show_previous_history()
+
+# If user ended up at result page without wanting to see a previous chat
+# Then he must have uploaded a file
+# If it is image
+elif st.session_state["file_uploaded"].type.find("image") != -1:
+    st.session_state["last_chat"] = len(st.session_state["history"])
+    with st.spinner("Generating Information..."):
+        show_image_and_gen()
+    st.session_state["file_uploaded"] = None
+
+# If it is audio
+elif st.session_state["file_uploaded"].type.find("audio") != -1:
+    st.session_state["last_chat"] = len(st.session_state["history"])
+    with st.spinner("Generation of audio"):
+        show_audio_and_gen()
+    st.session_state["file_uploaded"] = None
+
+# Not audio or image
+else:
+    st.error("Unsupported file Type")
 
 user_prompt = st.chat_input("Ask your follow up question!", key="user_prompt", on_submit=user_submits_prompt)
 
