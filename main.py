@@ -1,7 +1,7 @@
 import streamlit as st
 
 # Below statement is only for debugging purposes
-st.write("Written from main.py")
+# st.write("Written from main.py")
 
 
 # Declaring some keys in the session state

@@ -35,7 +35,18 @@ def show_previous_history():
                 st.write(chat["convo"])
 
 def get_info_from_species(species):
-    return get_llm_response("Write brief introduction about: "+ species)
+    prefix = """
+    Write brief introduction about the species mentioned below.
+    Please use the following format.
+    *Species-Name*:
+    *Family-Name*:
+    *Order-Name*:
+    *Peculiarities*:
+    *Food-Habits*:
+    *Where-it-is-found*:
+    ------
+    """
+    return get_llm_response(prefix + species)
 
 def show_image_and_gen():
     img = Image.open(st.session_state["file_uploaded"])
