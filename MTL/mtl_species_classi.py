@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import os
 import librosa
 import torch.nn.functional as F
@@ -19,7 +20,7 @@ from torchaudio.transforms import Resample
 import torchaudio.transforms as T
 import warnings
 warnings.filterwarnings("ignore")
-from MTL.data import species, num_species_classes, common_names, orders, num_order_classes, family, num_family_classes
+from data import species, num_species_classes, common_names, orders, num_order_classes, family, num_family_classes
 
 def mtl_species_classi(file_path):
     # Check if GPU is available and set the device accordingly
@@ -145,10 +146,25 @@ def mtl_species_classi(file_path):
             return torch.tensor(spectrograms)
 
         return decode
+    
+    def plot_mel_spec(audio_data):
+        # Convert the first channel to 2D if it's 3D
+        if audio_data[0].shape[0] == 3:
+            data_to_plot = audio_data[0][0]  # Take the first channel
+        else:
+            data_to_plot = audio_data[0]
+
+        # Plot the mel spectrogram
+        fig, ax = plt.subplots(figsize=(10, 5))
+        ax.imshow(data_to_plot, cmap='coolwarm')
+        ax.axis('off')
+        plt.show()
+        return fig
 
     decode_fn = build_decoder_inference()
     audio_data = decode_fn(file_path)
     audio_data = audio_data.permute(0, 3, 1, 2).to(device)
+    plot = plot_mel_spec(audio_data)
 
     with torch.no_grad():
         species_preds, _, _ = model_infer(audio_data)  # Only take the species output
@@ -162,6 +178,6 @@ def mtl_species_classi(file_path):
     species_count = Counter(sp)
     final_pred = species_count.most_common(1)[0][0]
     common_name = common_names[final_pred]
-    return common_name
+    return common_name, plot
 
-# print(mtl_species_classi("MTL/1003342351.ogg"))
+print(mtl_species_classi("MTL/1003342351.ogg"))
