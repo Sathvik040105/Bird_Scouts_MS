@@ -1,7 +1,7 @@
 import streamlit as st
 from PIL import Image
 from image.species_from_image import get_species_from_image
-from llm.generate_info import get_llm_response
+from llm.generate_info import get_llm_response_as_stream, get_llm_response_as_text
 from audio.mtl_species_classi import mtl_species_classi
 
 
@@ -12,7 +12,8 @@ def user_submits_prompt():
     """
     user_prompt = st.session_state["user_prompt"]
     i = st.session_state["show_chat"] = st.session_state["last_chat"]
-    information = get_llm_response(user_prompt)
+    information = get_llm_response_as_text(user_prompt)
+    print(information)
     st.session_state["history"][i].append({"type": "user", "convo": user_prompt, "format": "text"})
     st.session_state["history"][i].append({"type": "bot", "convo": information, "format": "text"})
 
@@ -45,7 +46,7 @@ def get_info_from_species(species):
     *Where-it-is-found*:
     ------
     """
-    return get_llm_response(prefix + species)
+    return get_llm_response_as_stream(prefix + species)
 
 def show_image_and_gen():
     img = Image.open(st.session_state["file_uploaded"])
