@@ -51,14 +51,16 @@ def get_info_from_species(species):
 def show_image_and_gen():
     img = Image.open(st.session_state["file_uploaded"])
     img = img.resize((300, 300))
-    species = get_species_from_image(img)
 
     # Displaying the image
     with st.chat_message("user"):
         _, center_col, _  = st.columns([1, 2, 1])
         center_col.write(img)
 
-    info = get_info_from_species(species)
+    # Showing spinner till inference is done
+    with st.spinner("Analyzing the image...."):
+        species = get_species_from_image(img)
+        info = get_info_from_species(species)
     info = st.write_stream(info)
 
     st.session_state["history"].append([])
@@ -72,13 +74,13 @@ def show_image_and_gen():
     })
 
 def show_audio_and_gen():
-    audio = None
-    species = "Sparrow" 
+    audio = st.session_state["file_uploaded"]
 
-    # Display the melspectogram
-    st.write("Mel spectrogram here")
-
-    info = get_info_from_species(species)
+    st.audio(audio)
+    with st.spinner("Analyzing the audio..."):
+        species = mtl_species_classi(audio)
+        st.write(species[1])
+        info = get_info_from_species(species[0])
     info = st.write_stream(info)
 
     st.session_state["history"].append([])
@@ -111,15 +113,13 @@ if st.session_state["show_chat"] != -1:
 # If it is image
 elif st.session_state["file_uploaded"].type.find("image") != -1:
     st.session_state["last_chat"] = len(st.session_state["history"])
-    with st.spinner("Generating Information..."):
-        show_image_and_gen()
+    show_image_and_gen()
     st.session_state["file_uploaded"] = None
 
 # If it is audio
 elif st.session_state["file_uploaded"].type.find("audio") != -1:
     st.session_state["last_chat"] = len(st.session_state["history"])
-    with st.spinner("Generation of audio"):
-        show_audio_and_gen()
+    show_audio_and_gen()
     st.session_state["file_uploaded"] = None
 
 # Not audio or image
