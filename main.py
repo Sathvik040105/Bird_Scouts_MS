@@ -3,6 +3,8 @@ import streamlit as st
 # Below statement is only for debugging purposes
 # st.write("Written from main.py")
 
+def on_file_upload():
+    st.session_state["file_uploaded"] = st.session_state["file_widget"]
 
 # Declaring some keys in the session state
 if "file_uploaded" not in st.session_state:
@@ -32,9 +34,7 @@ with st.sidebar:
     st.page_link(pages["hiw"])
     
     st.divider()
-    file = st.file_uploader("Image/Audio file uploader")
-    if file: 
-        st.session_state["file_uploaded"] = file
+    file = st.file_uploader("Image/Audio file uploader", key = "file_widget", on_change = on_file_upload)
     st.divider()
 
     # History
@@ -44,7 +44,6 @@ with st.sidebar:
     for i, chat in enumerate(st.session_state["history"]):
         if hist.button(f"Chat {i}"):
             st.session_state["show_chat"] = i
-
 
 # Checking which path to take now
 if st.session_state["file_uploaded"] or st.session_state["show_chat"] != -1:

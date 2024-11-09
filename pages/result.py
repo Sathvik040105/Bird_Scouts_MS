@@ -2,7 +2,7 @@ import streamlit as st
 from PIL import Image
 from image.species_from_image import get_species_from_image
 from llm.generate_info import get_llm_response
-from MTL.mtl_species_classi import mtl_species_classi
+from audio.mtl_species_classi import mtl_species_classi
 
 
 # Function to handle user prompt
@@ -98,7 +98,7 @@ def show_audio_and_gen():
 
 
 # Below statement is only for debugging purposes
-st.write("written from result.py")
+# st.write("written from result.py")
 
 
 # Checking if the user wants to see a previous chat
