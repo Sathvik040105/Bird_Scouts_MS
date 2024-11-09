@@ -12,12 +12,9 @@ def user_submits_prompt():
     """
     user_prompt = st.session_state["user_prompt"]
     i = st.session_state["show_chat"] = st.session_state["last_chat"]
-    with st.chat_message("user"):
-        st.write(user_prompt)
-    with st.chat_message("bot"):
-        information = st.write_stream(get_llm_response(user_prompt))
-    st.session_state["history"][i].append({"type": "user", "convo": user_prompt})
-    st.session_state["history"][i].append({"type": "bot", "convo": information})
+    information = get_llm_response(user_prompt)
+    st.session_state["history"][i].append({"type": "user", "convo": user_prompt, "format": "text"})
+    st.session_state["history"][i].append({"type": "bot", "convo": information, "format": "text"})
 
 
 def show_previous_history():
@@ -27,10 +24,12 @@ def show_previous_history():
     for chat in st.session_state["history"][i]:
         with st.chat_message(chat["type"]):
 
-            if isinstance(chat["convo"], Image.Image):
+            if chat["format"] == "image":
                 # Centering the image
                 _, center_col, _ = st.columns([1, 2, 1])
                 center_col.write(chat["convo"])
+            elif chat["format"] == "audio":
+                st.audio(chat["convo"])
             else:
                 st.write(chat["convo"])
 
@@ -57,39 +56,52 @@ def show_image_and_gen():
         _, center_col, _  = st.columns([1, 2, 1])
         center_col.write(img)
 
-    # Showing spinner till inference is done
-    with st.spinner("Analyzing the image...."):
-        species = get_species_from_image(img)
-        info = get_info_from_species(species)
-    info = st.write_stream(info)
+    with st.chat_message("bot"):
+        # Showing spinner till inference is done
+        with st.spinner("Analyzing the image...."):
+            species = get_species_from_image(img)
+            info = get_info_from_species(species)
+        info = st.write_stream(info)
 
     st.session_state["history"].append([])
     st.session_state["history"][-1].append({
         "type": "user",
+        "format": "image",
         "convo": img
     })
     st.session_state["history"][-1].append({
         "type": "bot",
+        "format": "text",
         "convo": info
     })
 
 def show_audio_and_gen():
     audio = st.session_state["file_uploaded"]
 
-    st.audio(audio)
-    with st.spinner("Analyzing the audio..."):
-        species = mtl_species_classi(audio)
-        st.write(species[1])
-        info = get_info_from_species(species[0])
-    info = st.write_stream(info)
+    with st.chat_message("user"):
+        st.audio(audio)
+
+    with st.chat_message("bot"):
+        with st.spinner("Analyzing the audio..."):
+            species = mtl_species_classi(audio)
+            st.write(species[1])
+            info = get_info_from_species(species[0])
+        info = st.write_stream(info)
 
     st.session_state["history"].append([])
     st.session_state["history"][-1].append({
         "type": "user",
+        "format": "audio",
         "convo": audio 
     })
     st.session_state["history"][-1].append({
+        "type": "user",
+        "format": "plot",
+        "convo": species[1] 
+    })
+    st.session_state["history"][-1].append({
         "type": "bot",
+        "format": "text",
         "convo": info
     })
 
@@ -101,7 +113,6 @@ def show_audio_and_gen():
 
 # Below statement is only for debugging purposes
 # st.write("written from result.py")
-
 
 # Checking if the user wants to see a previous chat
 if st.session_state["show_chat"] != -1:
