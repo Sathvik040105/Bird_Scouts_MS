@@ -1,32 +1,34 @@
 import os
-import google.generativeai as genai
-from google.generativeai.types import HarmBlockThreshold, HarmCategory
+from dotenv import load_dotenv
+from langchain_google_genai import GoogleGenerativeAI
+from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
+from langchain_core.prompts import PromptTemplate
+import streamlit as st
 
-# Set the API as environment variable
-API_KEY = os.environ.get('API_KEY')
-genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
+load_dotenv()
 
-def get_llm_response_as_text(prompt):
-    response = model.generate_content(prompt, stream=False, safety_settings = {
-        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE
-    })
+model = GoogleGenerativeAI(model="gemini-1.5-flash")
 
-    return response.text
+initial_prompt = PromptTemplate.from_template("""
+    Write brief introduction about {species} from the knowledge you have. 
+    Please use the following format.
+    *Species-Name*:
+    *Family-Name*:
+    *Order-Name*:
+    *Peculiarities*:
+    *Food-Habits*:
+    *Where-it-is-found*:
+    """)
 
-def get_llm_response_as_stream(prompt):
-    """
-    Get the response from the LLM model.
-    """
-    response = model.generate_content(prompt, stream=True, safety_settings = {
-        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE
-    })
-
+def get_llm_response_as_gen(i):
+    response = model.stream(st.session_state["history"][i][0])
+    total_text = ""
     for chunk in response:
-        yield chunk.text
+        total_text += chunk
+        yield chunk
+    st.session_state["history"][i][0].append(AIMessage(total_text))
+
+def get_llm_response_as_text(i):
+    response = model.invoke(st.session_state["history"][i][0])
+    st.session_state["history"][i][0].append(AIMessage(response))
+    return response

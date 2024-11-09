@@ -3,12 +3,17 @@ import streamlit as st
 # Below statement is only for debugging purposes
 # st.write("Written from main.py")
 
+
 def on_file_upload():
     st.session_state["file_uploaded"] = st.session_state["file_widget"]
 
 # Declaring some keys in the session state
 if "file_uploaded" not in st.session_state:
     st.session_state["file_uploaded"] = None
+# History is list, each item corresponds to a unique chat
+# Each item has two lists, 
+# The first list has the chat history
+# Second list has format and resources i.e image/audio
 if "history" not in st.session_state:
     st.session_state["history"] = []
 if "show_chat" not in st.session_state:

@@ -1,9 +1,12 @@
 import streamlit as st
 from PIL import Image
 from image.species_from_image import get_species_from_image
-from llm.generate_info import get_llm_response_as_stream, get_llm_response_as_text
 from audio.mtl_species_classi import mtl_species_classi
+from llm.generate_info import initial_prompt, get_llm_response_as_gen, get_llm_response_as_text 
+from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
 
+BOT_ICON = "assistant"
+USER_ICON = "😎"
 
 # Function to handle user prompt
 def user_submits_prompt():
@@ -12,100 +15,75 @@ def user_submits_prompt():
     """
     user_prompt = st.session_state["user_prompt"]
     i = st.session_state["show_chat"] = st.session_state["last_chat"]
-    information = get_llm_response_as_text(user_prompt)
-    print(information)
-    st.session_state["history"][i].append({"type": "user", "convo": user_prompt, "format": "text"})
-    st.session_state["history"][i].append({"type": "bot", "convo": information, "format": "text"})
+    st.session_state["history"][i][0].append(HumanMessage(user_prompt))
+    get_llm_response_as_text(i)
 
 
 def show_previous_history():
     i = st.session_state["show_chat"]
     st.session_state["show_chat"] = -1
 
-    for chat in st.session_state["history"][i]:
-        with st.chat_message(chat["type"]):
-
-            if chat["format"] == "image":
-                # Centering the image
-                _, center_col, _ = st.columns([1, 2, 1])
-                center_col.write(chat["convo"])
-            elif chat["format"] == "audio":
-                st.audio(chat["convo"])
-            else:
-                st.write(chat["convo"])
-
-def get_info_from_species(species):
-    prefix = """
-    Write brief introduction about the species mentioned below.
-    Please use the following format.
-    *Species-Name*:
-    *Family-Name*:
-    *Order-Name*:
-    *Peculiarities*:
-    *Food-Habits*:
-    *Where-it-is-found*:
-    ------
-    """
-    return get_llm_response_as_stream(prefix + species)
+    with st.chat_message(USER_ICON):
+        format = st.session_state["history"][i][1][0]
+        resource = st.session_state["history"][i][1][1]
+        if format == "image":
+            _, col, _ = st.columns([1, 2, 1])
+            col.write(resource)
+        elif format == "audio":
+            st.audio(resource)
+    
+    for j in range(1, len(st.session_state["history"][i][0])):
+        msg = st.session_state["history"][i][0][j]
+        icon = BOT_ICON if isinstance(msg, AIMessage) else USER_ICON
+        with st.chat_message(icon):
+            st.write(msg.content)
 
 def show_image_and_gen():
     img = Image.open(st.session_state["file_uploaded"])
     img = img.resize((300, 300))
 
+    # Creating a space for storing message for this chat
+    i = len(st.session_state["history"])
+    st.session_state["history"].append([[], []])
+
     # Displaying the image
-    with st.chat_message("user"):
+    with st.chat_message(USER_ICON):
         _, center_col, _  = st.columns([1, 2, 1])
         center_col.write(img)
 
-    with st.chat_message("bot"):
+    with st.chat_message(BOT_ICON):
         # Showing spinner till inference is done
         with st.spinner("Analyzing the image...."):
             species = get_species_from_image(img)
-            info = get_info_from_species(species)
+            st.session_state["history"][-1][0].append(
+                SystemMessage(initial_prompt.invoke({"species": species}).text)
+            )
+            info = get_llm_response_as_gen(i)
         info = st.write_stream(info)
 
-    st.session_state["history"].append([])
-    st.session_state["history"][-1].append({
-        "type": "user",
-        "format": "image",
-        "convo": img
-    })
-    st.session_state["history"][-1].append({
-        "type": "bot",
-        "format": "text",
-        "convo": info
-    })
+    st.session_state["history"][-1][1].append("image")
+    st.session_state["history"][-1][1].append(img)
 
 def show_audio_and_gen():
     audio = st.session_state["file_uploaded"]
 
-    with st.chat_message("user"):
+    i = len(st.session_state["history"])
+    st.session_state["history"].append([[], []])
+
+    with st.chat_message(USER_ICON):
         st.audio(audio)
 
-    with st.chat_message("bot"):
+    with st.chat_message(BOT_ICON):
         with st.spinner("Analyzing the audio..."):
-            species = mtl_species_classi(audio)
-            st.write(species[1])
-            info = get_info_from_species(species[0])
+            species, _ = mtl_species_classi(audio)
+            st.session_state["history"][-1][0].append(
+                SystemMessage(initial_prompt.invoke({"species": species}).text)
+            )
+            info = get_llm_response_as_gen(i)
         info = st.write_stream(info)
 
-    st.session_state["history"].append([])
-    st.session_state["history"][-1].append({
-        "type": "user",
-        "format": "audio",
-        "convo": audio 
-    })
-    st.session_state["history"][-1].append({
-        "type": "user",
-        "format": "plot",
-        "convo": species[1] 
-    })
-    st.session_state["history"][-1].append({
-        "type": "bot",
-        "format": "text",
-        "convo": info
-    })
-
+    st.session_state["history"][-1][1].append("audio")
+    st.session_state["history"][-1][1].append(audio)
 
 
 ############################ PAGE LOGIC STARTS HERE ###################################
