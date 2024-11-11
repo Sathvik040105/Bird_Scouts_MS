@@ -46,16 +46,6 @@ load_dotenv()
 
 model = get_ai_model()
 
-# initial_prompt = PromptTemplate.from_template("""
-#     Write brief introduction about {species} from the knowledge you have. 
-#     Please use the following format.
-#     *Species-Name*:
-#     *Family-Name*:
-#     *Order-Name*:
-#     *Peculiarities*:
-#     *Food-Habits*:
-#     *Where-it-is-found*:
-#     """)
 
 initial_prompt = """
 
@@ -87,19 +77,6 @@ ques_ans_format = """
 Question: {question}
 Context: {context}
 """
-
-# def get_llm_response_as_gen(i):
-#     response = model.stream(st.session_state["history"][i][0])
-#     total_text = ""
-#     for chunk in response:
-#         total_text += chunk
-#         yield chunk
-#     st.session_state["history"][i][0].append(AIMessage(total_text))
-
-# def get_llm_response_as_text(i):
-#     response = model.invoke(st.session_state["history"][i][0])
-#     st.session_state["history"][i][0].append(AIMessage(response))
-#     return response
 
 def get_llm_response_as_gen(i, question):
     extern_data = retriever.invoke(question)

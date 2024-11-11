@@ -56,10 +56,6 @@ def show_image_and_gen():
         # Showing spinner till inference is done
         with st.spinner("Analyzing the image...."):
             species = get_species_from_image(img)
-            # st.session_state["history"][-1][0].append(
-            #     SystemMessage(initial_prompt.invoke({"species": species}).text)
-            # )
-            # info = get_llm_response_as_gen(i)
             st.session_state["history"][-1][0].append(
                 SystemMessage(initial_prompt)
             )
@@ -67,6 +63,7 @@ def show_image_and_gen():
         info = st.write_stream(info)
         st.session_state["history"][-1][0].append(AIMessage(info))
 
+    st.session_state["chat_names"].append(f"{species} • Image")
     st.session_state["history"][-1][1].append("image")
     st.session_state["history"][-1][1].append(img)
 
@@ -82,9 +79,6 @@ def show_audio_and_gen():
     with st.chat_message(BOT_ICON):
         with st.spinner("Analyzing the audio..."):
             species, _ = mtl_species_classi(audio)
-            # st.session_state["history"][-1][0].append(
-            #     SystemMessage(initial_prompt.invoke({"species": species}).text)
-            # )
             st.session_state["history"][-1][0].append(
                 SystemMessage(initial_prompt)
             )
@@ -92,6 +86,7 @@ def show_audio_and_gen():
         info = st.write_stream(info)
         st.session_state["history"][-1][0].append(AIMessage(info))
 
+    st.session_state["chat_names"].append(f"{species} • Audio")
     st.session_state["history"][-1][1].append("audio")
     st.session_state["history"][-1][1].append(audio)
 

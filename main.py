@@ -1,8 +1,5 @@
 import streamlit as st
 
-# Below statement is only for debugging purposes
-# st.write("Written from main.py")
-
 
 def on_file_upload():
     st.session_state["file_uploaded"] = st.session_state["file_widget"]
@@ -20,6 +17,8 @@ if "show_chat" not in st.session_state:
     st.session_state["show_chat"] = -1
 if "last_chat" not in st.session_state:
     st.session_state["last_chat"] = -1
+if "chat_names" not in st.session_state:
+    st.session_state["chat_names"] = []
 
 
 # Defining the pages
@@ -39,7 +38,7 @@ with st.sidebar:
     st.page_link(pages["hiw"])
     
     st.divider()
-    file = st.file_uploader("Image/Audio file uploader", key = "file_widget", on_change = on_file_upload)
+    file = st.file_uploader("Upload Image/Audio", key = "file_widget", on_change = on_file_upload)
     st.divider()
 
     # History
@@ -47,7 +46,7 @@ with st.sidebar:
 
     # Render the history
     for i, chat in enumerate(st.session_state["history"]):
-        if hist.button(f"Chat {i}"):
+        if hist.button(st.session_state["chat_names"][i]):
             st.session_state["show_chat"] = i
 
 # Checking which path to take now
