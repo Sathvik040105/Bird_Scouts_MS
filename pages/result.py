@@ -15,8 +15,9 @@ def user_submits_prompt():
     """
     user_prompt = st.session_state["user_prompt"]
     i = st.session_state["show_chat"] = st.session_state["last_chat"]
+    ai_response = get_llm_response_as_text(i, user_prompt)
     st.session_state["history"][i][0].append(HumanMessage(user_prompt))
-    get_llm_response_as_text(i)
+    st.session_state["history"][i][0].append(AIMessage(ai_response))
 
 
 def show_previous_history():
@@ -55,11 +56,16 @@ def show_image_and_gen():
         # Showing spinner till inference is done
         with st.spinner("Analyzing the image...."):
             species = get_species_from_image(img)
+            # st.session_state["history"][-1][0].append(
+            #     SystemMessage(initial_prompt.invoke({"species": species}).text)
+            # )
+            # info = get_llm_response_as_gen(i)
             st.session_state["history"][-1][0].append(
-                SystemMessage(initial_prompt.invoke({"species": species}).text)
+                SystemMessage(initial_prompt)
             )
-            info = get_llm_response_as_gen(i)
+            info = get_llm_response_as_gen(i, "Give me a brief summary about " + species)
         info = st.write_stream(info)
+        st.session_state["history"][-1][0].append(AIMessage(info))
 
     st.session_state["history"][-1][1].append("image")
     st.session_state["history"][-1][1].append(img)
@@ -76,11 +82,15 @@ def show_audio_and_gen():
     with st.chat_message(BOT_ICON):
         with st.spinner("Analyzing the audio..."):
             species, _ = mtl_species_classi(audio)
+            # st.session_state["history"][-1][0].append(
+            #     SystemMessage(initial_prompt.invoke({"species": species}).text)
+            # )
             st.session_state["history"][-1][0].append(
-                SystemMessage(initial_prompt.invoke({"species": species}).text)
+                SystemMessage(initial_prompt)
             )
-            info = get_llm_response_as_gen(i)
+            info = get_llm_response_as_gen(i, "Give me a brief summary about " + species)
         info = st.write_stream(info)
+        st.session_state["history"][-1][0].append(AIMessage(info))
 
     st.session_state["history"][-1][1].append("audio")
     st.session_state["history"][-1][1].append(audio)
@@ -97,9 +107,9 @@ def show_audio_and_gen():
 if st.session_state["show_chat"] != -1:
     st.session_state["last_chat"] = st.session_state["show_chat"]
     show_previous_history()
-
-# If user ended up at result page without wanting to see a previous chat
-# Then he must have uploaded a file
+elif st.session_state["file_uploaded"] is None:
+    st.switch_page("./pages/home.py")
+# User must have uploaded a file
 # If it is image
 elif st.session_state["file_uploaded"].type.find("image") != -1:
     st.session_state["last_chat"] = len(st.session_state["history"])
