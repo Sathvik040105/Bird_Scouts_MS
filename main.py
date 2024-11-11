@@ -27,6 +27,7 @@ pages = {
     "au": st.Page("./pages/about_us.py", title="About Us"),
     "hiw": st.Page("./pages/how_it_works.py", title="How It Works"),
     "result": st.Page("./pages/result.py", title="Result"),
+    "neigh": st.Page("./pages/neighbourhood.py", title="Neighbourhood")
 }
 
 page = st.navigation(list(pages.values()), position="hidden")
@@ -36,6 +37,7 @@ with st.sidebar:
     st.page_link(pages["home"])
     st.page_link(pages["au"])
     st.page_link(pages["hiw"])
+    st.page_link(pages["neigh"])
     
     st.divider()
     file = st.file_uploader("Upload Image/Audio", key = "file_widget", on_change = on_file_upload)
