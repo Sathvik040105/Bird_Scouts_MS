@@ -1,6 +1,7 @@
 import streamlit as st
 from PIL import Image
-from image.species_from_image import get_species_from_image
+from image.bird_image.species_from_image import get_species_from_image
+from image.feather_image.species_from_feather import get_species_from_feather
 from audio.mtl_species_classi import mtl_species_classi
 from llm.generate_info import initial_prompt, get_llm_response_as_gen, get_llm_response_as_text 
 from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
@@ -39,7 +40,7 @@ def show_previous_history():
         with st.chat_message(icon):
             st.write(msg.content)
 
-def show_image_and_gen():
+def show_image_and_gen(image_of):
     img = Image.open(st.session_state["file_uploaded"])
     img = img.resize((300, 300))
 
@@ -55,7 +56,11 @@ def show_image_and_gen():
     with st.chat_message(BOT_ICON):
         # Showing spinner till inference is done
         with st.spinner("Analyzing the image...."):
-            species = get_species_from_image(img)
+            if image_of == "bird":
+                species = get_species_from_image(img)
+            else:
+                species = get_species_from_feather(img)
+                print("SPECIES: ", species)
             st.session_state["history"][-1][0].append(
                 SystemMessage(initial_prompt)
             )
@@ -106,17 +111,21 @@ elif st.session_state["file_uploaded"] is None:
     st.switch_page("./pages/home.py")
 # User must have uploaded a file
 # If it is image
-elif st.session_state["file_uploaded"].type.find("image") != -1:
+# elif st.session_state["file_uploaded"].type.find("image") != -1:
+elif st.session_state["model_type"] == "Bird Image":
     st.session_state["last_chat"] = len(st.session_state["history"])
-    show_image_and_gen()
+    show_image_and_gen("bird")
     st.session_state["file_uploaded"] = None
 
 # If it is audio
-elif st.session_state["file_uploaded"].type.find("audio") != -1:
+elif st.session_state["model_type"] == "Bird Audio":
     st.session_state["last_chat"] = len(st.session_state["history"])
     show_audio_and_gen()
     st.session_state["file_uploaded"] = None
-
+elif st.session_state["model_type"] == "Feather Image":
+    st.session_state["last_chat"] = len(st.session_state["history"])
+    show_image_and_gen("feather")
+    st.session_state["file_uploaded"] = None
 # Not audio or image
 else:
     st.error("Unsupported file Type")

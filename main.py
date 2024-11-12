@@ -3,6 +3,7 @@ import streamlit as st
 
 def on_file_upload():
     st.session_state["file_uploaded"] = st.session_state["file_widget"]
+    st.session_state["model_type"] = st.session_state["model_selectbox"]
 
 # Declaring some keys in the session state
 if "file_uploaded" not in st.session_state:
@@ -19,6 +20,8 @@ if "last_chat" not in st.session_state:
     st.session_state["last_chat"] = -1
 if "chat_names" not in st.session_state:
     st.session_state["chat_names"] = []
+if "model_type" not in st.session_state:
+    st.session_state["model_type"] = "Bird Image"
 
 
 # Defining the pages
@@ -40,6 +43,11 @@ with st.sidebar:
     st.page_link(pages["neigh"])
     
     st.divider()
+    st.selectbox("Select Model", [
+        "Bird Image",
+        "Bird Audio",
+        "Feather Image"
+    ], key="model_selectbox", placeholder=st.session_state["model_type"])
     file = st.file_uploader("Upload Image/Audio", key = "file_widget", on_change = on_file_upload)
     st.divider()
 

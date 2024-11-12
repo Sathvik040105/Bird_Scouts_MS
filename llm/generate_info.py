@@ -19,8 +19,8 @@ def get_vs_retriever():
     embedding = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
     main_url = "https://en.wikipedia.org/wiki/{species}"
 
-    if os.path.exists("./chromadb"):
-        chdb = Chroma(collection_name="birds", embedding_function=embedding)
+    if os.path.exists("./chromadb/chroma.sqlite3"):
+        chdb = Chroma(collection_name="birds_vs", embedding_function=embedding, persist_directory="./chromadb")
         retriever = chdb.as_retriever(search_type="similarity", search_kwargs={"k": 6})
         return retriever
 
@@ -32,10 +32,13 @@ def get_vs_retriever():
 
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=150)
     splits = splitter.split_documents(docs)
-    chdb = Chroma.from_documents(documents=splits, embedding=embedding,
-                                     persist_directory="./chromadb")
-    chdb._collection_name = "birds"
-    retriever = chdb.as_retriever(search_type="similarity", search_kwargs={"k": 6})
+    vs = Chroma(
+        collection_name="birds_vs",
+        embedding_function=embedding,
+        persist_directory="./chromadb"
+    )
+    vs.add_documents(splits)
+    retriever = vs.as_retriever(search_type="similarity", search_kwargs={"k": 6})
 
     return retriever
 
