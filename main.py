@@ -46,7 +46,9 @@ with st.sidebar:
     st.selectbox("Select Model", [
         "Bird Image",
         "Bird Audio",
-        "Feather Image"
+        "Feather Image",
+        "Leaf Image",
+        "Trunk Image"
     ], key="model_selectbox", placeholder=st.session_state["model_type"])
     file = st.file_uploader("Upload Image/Audio", key = "file_widget", on_change = on_file_upload)
     st.divider()

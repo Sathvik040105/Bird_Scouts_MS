@@ -3,11 +3,11 @@ from PIL import Image
 from image.bird_image.species_from_image import get_species_from_image
 from image.bird_image.detect_and_annotate import get_bbox_and_species
 from image.feather_image.species_from_feather import get_species_from_feather
+from image.leaf_image.inference_leaf import get_species_from_leaf
 from audio.species.mtl_species_classi import mtl_species_classi
 from audio.call.inference_call import predict_audio_class
 from llm.generate_info import initial_prompt, get_llm_response_as_gen, get_llm_response_as_text 
 from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
-import matplotlib.pyplot as plt
 
 BOT_ICON = "assistant"
 USER_ICON = "😎"
@@ -57,9 +57,11 @@ def show_image_and_gen(image_of):
             if image_of == "bird":
                 # species = get_species_from_image(img)
                 img, species = get_bbox_and_species(img)
-                plt.imshow(img)
-            else:
+            elif image_of == "feather":
                 species = get_species_from_feather(img)
+            elif image_of == "leaf":
+                species = get_species_from_leaf(img) 
+                print(species)
         _, center_col, _  = st.columns([1, 2, 1])
         center_col.write(img)
 
@@ -131,10 +133,17 @@ elif st.session_state["model_type"] == "Bird Audio":
     st.session_state["last_chat"] = len(st.session_state["history"])
     show_audio_and_gen()
     st.session_state["file_uploaded"] = None
+
 elif st.session_state["model_type"] == "Feather Image":
     st.session_state["last_chat"] = len(st.session_state["history"])
     show_image_and_gen("feather")
     st.session_state["file_uploaded"] = None
+
+elif st.session_state["model_type"] == "Leaf Image":
+    st.session_state["last_chat"] = len(st.session_state["history"])
+    show_image_and_gen("leaf")
+    st.session_state["file_uploaded"] = None
+
 # Not audio or image
 else:
     st.error("Unsupported file Type")
