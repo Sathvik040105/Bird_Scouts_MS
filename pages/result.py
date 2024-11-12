@@ -1,11 +1,13 @@
 import streamlit as st
 from PIL import Image
 from image.bird_image.species_from_image import get_species_from_image
+from image.bird_image.detect_and_annotate import get_bbox_and_species
 from image.feather_image.species_from_feather import get_species_from_feather
 from audio.species.mtl_species_classi import mtl_species_classi
 from audio.call.inference_call import predict_audio_class
 from llm.generate_info import initial_prompt, get_llm_response_as_gen, get_llm_response_as_text 
 from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
+import matplotlib.pyplot as plt
 
 BOT_ICON = "assistant"
 USER_ICON = "😎"
@@ -51,23 +53,28 @@ def show_image_and_gen(image_of):
 
     # Displaying the image
     with st.chat_message(USER_ICON):
+        with st.spinner("Analyzing image..."):
+            if image_of == "bird":
+                # species = get_species_from_image(img)
+                img, species = get_bbox_and_species(img)
+                plt.imshow(img)
+            else:
+                species = get_species_from_feather(img)
         _, center_col, _  = st.columns([1, 2, 1])
         center_col.write(img)
 
+
     with st.chat_message(BOT_ICON):
         # Showing spinner till inference is done
-        with st.spinner("Analyzing the image...."):
-            if image_of == "bird":
-                species = get_species_from_image(img)
-            else:
-                species = get_species_from_feather(img)
-                print("SPECIES: ", species)
+        with st.spinner("LLM is thinking...."):
+
             st.session_state["history"][-1][0].append(
                 SystemMessage(initial_prompt)
             )
             info = get_llm_response_as_gen(i, "Give me a brief summary about " + species)
         info = st.write_stream(info)
         st.session_state["history"][-1][0].append(AIMessage(info))
+
 
     st.session_state["chat_names"].append(f"{species} • Image")
     st.session_state["history"][-1][1].append("image")

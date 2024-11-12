@@ -15,9 +15,9 @@ for member in members:
         col2.markdown(f"Linkedln:something")
 """
 
-with st.container(border=True):
-        col1, col2 = st.columns(2)
-        col1.markdown(f"**Aditya**")
-        col2.markdown(f"Github:[Aditya-Manjunatha]{https://github.com/Aditya-Manjunatha}\n")
-        col2.markdown(f"Email:aditya.manjunatha01@gmail.com\n")
-        col2.markdown(f"Linkedln:[Aditya Manjunatha]{www.linkedin.com/in/aditya-manjunatha-33b620336}")
+# with st.container(border=True):
+#         col1, col2 = st.columns(2)
+#         col1.markdown(f"**Aditya**")
+#         col2.markdown(f"Github:[Aditya-Manjunatha]{https://github.com/Aditya-Manjunatha}\n")
+#         col2.markdown(f"Email:aditya.manjunatha01@gmail.com\n")
+#         col2.markdown(f"Linkedln:[Aditya Manjunatha]{www.linkedin.com/in/aditya-manjunatha-33b620336}")
