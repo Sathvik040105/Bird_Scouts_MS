@@ -38,7 +38,7 @@ def get_vs_retriever():
         persist_directory="./chromadb"
     )
     vs.add_documents(splits)
-    retriever = vs.as_retriever(search_type="similarity", search_kwargs={"k": 6})
+    retriever = vs.as_retriever(search_type="similarity", search_kwargs={"k": 10})
 
     return retriever
 

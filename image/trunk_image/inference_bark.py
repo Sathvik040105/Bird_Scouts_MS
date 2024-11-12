@@ -7,9 +7,7 @@ import torchvision
 from torchvision import datasets, transforms
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
-from torchsummary import summary
 import torchvision.models as models
-from torchviz import make_dot  #visualize computational graph
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
@@ -104,7 +102,7 @@ def preprocess_image(image_path):
 
 
 
-def predict_image_class(image_path):
+def get_species_from_trunk(image_path):
     image = preprocess_image(image_path)
     model.eval()
     with torch.no_grad():

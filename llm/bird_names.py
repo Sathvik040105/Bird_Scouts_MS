@@ -73,5 +73,7 @@ birds = [
      "Sarus-Crane",
      "White-Breasted-Kingfisher",
      "White-Breasted-Waterhen",
-     "White-Wagtail"
+     "White-Wagtail",
+     "Platanus",
+     "Podocarpus_macrophyllus"
 ]
