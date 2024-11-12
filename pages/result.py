@@ -2,7 +2,8 @@ import streamlit as st
 from PIL import Image
 from image.bird_image.species_from_image import get_species_from_image
 from image.feather_image.species_from_feather import get_species_from_feather
-from audio.mtl_species_classi import mtl_species_classi
+from audio.species.mtl_species_classi import mtl_species_classi
+from audio.call.inference_call import predict_audio_class
 from llm.generate_info import initial_prompt, get_llm_response_as_gen, get_llm_response_as_text 
 from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
 
@@ -84,10 +85,11 @@ def show_audio_and_gen():
     with st.chat_message(BOT_ICON):
         with st.spinner("Analyzing the audio..."):
             species, _ = mtl_species_classi(audio)
+            type_of_call = predict_audio_class(audio)
             st.session_state["history"][-1][0].append(
                 SystemMessage(initial_prompt)
             )
-            info = get_llm_response_as_gen(i, "Give me a brief summary about " + species)
+            info = get_llm_response_as_gen(i, f"You are given a audio of {species}, performing {type_of_call} type of sound. Give brief summary about this bird." )
         info = st.write_stream(info)
         st.session_state["history"][-1][0].append(AIMessage(info))
 

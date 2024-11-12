@@ -75,6 +75,7 @@ If user is asking a brief summary about a bird, you should follow the markdown f
 **Behaviour**: House Crows are known for their intelligence and adaptability. \n
 **Food-Habits**: They are omnivorous and feed on a variety of food items. \n
 **Breeding**: They build their nests in trees and buildings. \n
+**Type of Call**: Crow in the audio is singing a mating call. \n 
 -EXAMPLE FORMAT ENDS HERE- 
 
 The input for you will be provided as:
@@ -83,6 +84,7 @@ Context: <context>
 
 You should output the answer to the question asked by the user.
 Also encourage the user to ask more questions if they have any.
+Once again, please only include 'Type of Call' if you are provided about call type information.
 """
 
 ques_ans_format = """
