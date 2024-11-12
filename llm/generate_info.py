@@ -8,25 +8,34 @@ from langchain_community.document_loaders import WebBaseLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from google.generativeai.types.safety_types import HarmBlockThreshold, HarmCategory
 from langchain_chroma import Chroma
+import chromadb
 import streamlit as st
 from llm.bird_names import birds
 import bs4
 
 @st.cache_resource
 def get_vs_retriever():
-    main_url = "https://en.wikipedia.org/wiki/{species}"
+
     embedding = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+    main_url = "https://en.wikipedia.org/wiki/{species}"
+
+    if os.path.exists("./chromadb"):
+        chdb = Chroma(collection_name="birds", embedding_function=embedding)
+        retriever = chdb.as_retriever(search_type="similarity", search_kwargs={"k": 6})
+        return retriever
 
     loader = WebBaseLoader(
         web_paths=[main_url.format(species=bird) for bird in birds],
         bs_kwargs={"parse_only": bs4.SoupStrainer("p")}
     )
     docs = loader.load()
+
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=150)
     splits = splitter.split_documents(docs)
-    chromadb = Chroma.from_documents(documents=splits, embedding=embedding,
+    chdb = Chroma.from_documents(documents=splits, embedding=embedding,
                                      persist_directory="./chromadb")
-    retriever = chromadb.as_retriever(search_type="similarity", search_kwargs={"k": 6})
+    chdb._collection_name = "birds"
+    retriever = chdb.as_retriever(search_type="similarity", search_kwargs={"k": 6})
 
     return retriever
 
@@ -41,8 +50,8 @@ def get_ai_model():
     })
     return model
 
-retriever = get_vs_retriever()
 load_dotenv()
+retriever = get_vs_retriever()
 
 model = get_ai_model()
 
