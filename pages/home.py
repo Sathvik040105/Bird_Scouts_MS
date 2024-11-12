@@ -1,6 +1,8 @@
 import streamlit as st
 
-st.title("Welcome to Bird scouts!🐦🌿")
+example_variable = st.session_state.user_state.get("user_name", "Default Value")
+
+st.title(f"Welcome to Bird Scouts, {example_variable}!🐦🌿")
 
 st.subheader("""Bird Scouts is your digital companion for bird identification. This application can identify bird species by analyzing images or audio clips of their songs and calls. Whether you're a birdwatcher, researcher, or simply curious about the feathered friends around you, Bird Scouts brings the world of avian diversity right to your fingertips.""") 
 
