@@ -71,11 +71,18 @@ def show_image_and_gen(image_of):
     with st.chat_message(BOT_ICON):
         # Showing spinner till inference is done
         with st.spinner("LLM is thinking...."):
-
-            st.session_state["history"][-1][0].append(
-                SystemMessage(initial_prompt)
-            )
-            info = get_llm_response_as_gen(i, "Give me a brief summary about " + species)
+            try:
+                st.session_state["history"][-1][0].append(
+                    SystemMessage(initial_prompt)
+                )
+                info = get_llm_response_as_gen(i, "Give me a brief summary about " + species)
+            except:
+                st.session_state["history"].pop()
+                st.session_state["history"].append([[], []])
+                st.session_state["history"][-1][0].append(
+                    SystemMessage(initial_prompt)
+                )
+                info = get_llm_response_as_gen(i, "Give me a brief summary about " + species)
         info = st.write_stream(info)
         st.session_state["history"][-1][0].append(AIMessage(info))
 
@@ -87,20 +94,28 @@ def show_image_and_gen(image_of):
 def show_audio_and_gen():
     audio = st.session_state["file_uploaded"]
 
-    i = len(st.session_state["history"])
-    st.session_state["history"].append([[], []])
 
     with st.chat_message(USER_ICON):
         st.audio(audio)
+    
+    i = len(st.session_state["history"])
+    st.session_state["history"].append([[], []])
 
     with st.chat_message(BOT_ICON):
         with st.spinner("Analyzing the audio..."):
             species, _ = mtl_species_classi(audio)
             type_of_call = predict_audio_class(audio)
-            st.session_state["history"][-1][0].append(
-                SystemMessage(initial_prompt)
-            )
-            info = get_llm_response_as_gen(i, f"You are given a audio of {species}, performing {type_of_call} type of sound. Give brief summary about this bird." )
+            try:
+                st.session_state["history"][-1][0].append(
+                    SystemMessage(initial_prompt)
+                )
+                info = get_llm_response_as_gen(i, f"You are given a audio of {species} making '{type_of_call}' type of sound. Give brief summary about this bird." )
+            except:
+                st.session_state["history"].append([[], []])
+                st.session_state["history"][-1][0].append(
+                    SystemMessage(initial_prompt)
+                )
+                info = get_llm_response_as_gen(i, f"You are given a audio of {species}, making '{type_of_call}' type of sound. Give brief summary about this bird." )
         info = st.write_stream(info)
         st.session_state["history"][-1][0].append(AIMessage(info))
 
