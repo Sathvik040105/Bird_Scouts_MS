@@ -1,5 +1,6 @@
 import streamlit as st
 import sqlite3
+import base64
 
 # st.set_page_config(initial_sidebar_state='collapsed')
 
@@ -44,6 +45,21 @@ if 'user_state' not in st.session_state:
         'logged_in': False
     }
 
+def add_bg_from_file(file_path):
+    with open(file_path, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode()
+    st.markdown(
+         f"""
+         <style>
+         .stApp {{
+             background-image: url("data:image/png;base64,{encoded_string}");
+             background-size: cover;
+         }}
+         </style>
+         """,
+         unsafe_allow_html=True
+     )
+
 # Create navigation state
 if 'page' not in st.session_state:
     st.session_state.page = 'select'
@@ -55,21 +71,39 @@ def navigate(page):
 
 if not st.session_state.user_state['logged_in']:
     if st.session_state.page == 'select':
-        st.title('Welcome!')
-        login = st.button('Login')
-        # st.set_option('theme.button.fontSize', '24px')
-        # st.set_option('theme.button.height', '60px')
-        # st.set_option('theme.button.padding', '0 32px')
-        if login:
-            navigate('login')
-        signup = st.button('Sign Up')
-        # st.set_option('theme.button.fontSize', '24px')
-        # st.set_option('theme.button.height', '60px')
-        # st.set_option('theme.button.padding', '0 32px')
-        if signup:
-            navigate('signup')
+        add_bg_from_file("free-jungle-border-clip-art-9.png")
+        # Center the buttons using columns
+        col1, col2, col3 = st.columns([1, 2, 1])
+        
+        with col2:
+            st.write("")  # Add vertical space
+            st.write("")
+            st.write("")
+            st.write("")  # Add vertical space
+            st.write("")
+            st.write("")
+            st.write("")  # Add vertical space
+            st.write("")
+            st.write("")
+            st.write("")  # Add vertical space
+            st.write("")
+            st.write("")
+            # st.write("")  # Add vertical space
+            # st.write("")
+            # st.write("")
+            # st.write("")  # Add vertical space
+            # st.write("")
+            # st.write("")
+            st.title('Welcome!')
+            login = st.button('Login')
+            if login:
+                navigate('login')
+            signup = st.button('Sign Up')
+            if signup:
+                navigate('signup')
     # Create login form
     elif st.session_state.page == 'login':
+        # add_bg_from_file("6697303051fa63258d4da4427ba167c1-crooked-tree-birds-silhouette-landscape.png")
         st.write('Enter Credentials:')
         user_name = st.text_input('User Name')
         password = st.text_input('Password', type='password')
