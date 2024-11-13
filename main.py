@@ -8,6 +8,7 @@ def on_file_upload():
     st.session_state["file_uploaded"] = st.session_state["file_widget"]
     st.session_state["model_type"] = st.session_state["model_selectbox"]
 
+    
 # Initialize SQLite database 
 conn = sqlite3.connect('users.db')
 c = conn.cursor()
@@ -200,14 +201,16 @@ elif st.session_state.user_state['logged_in']:
         # st.divider()
 
         st.divider()
-        st.selectbox("Select Model", [
-            "Bird Image",
-            "Bird Audio",
-            "Feather Image",
-            "Leaf Image",
-            "Trunk Image"
-        ], key="model_selectbox", placeholder=st.session_state["model_type"])
-        file = st.file_uploader("Upload Image/Audio", key = "file_widget", on_change = on_file_upload)
+        with st.form(key="model select"):
+            st.selectbox("Select Model", [
+                "Bird Image",
+                "Bird Audio",
+                "Feather Image",
+                "Leaf Image",
+                "Trunk Image"
+            ], key="model_selectbox", placeholder=st.session_state["model_type"])
+            file = st.file_uploader("Upload Image/Audio", key = "file_widget")
+            st.form_submit_button("Predict!", on_click=on_file_upload)
         st.divider()
 
         # History
