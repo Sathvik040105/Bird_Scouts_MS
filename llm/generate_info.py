@@ -30,7 +30,7 @@ def get_vs_retriever():
     )
     docs = loader.load()
 
-    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=150)
+    splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=200)
     splits = splitter.split_documents(docs)
     vs = Chroma(
         collection_name="birds_vs",
@@ -38,7 +38,7 @@ def get_vs_retriever():
         persist_directory="./chromadb"
     )
     vs.add_documents(splits)
-    retriever = vs.as_retriever(search_type="similarity", search_kwargs={"k": 10})
+    retriever = vs.as_retriever(search_type="similarity", search_kwargs={"k": 20})
 
     return retriever
 
@@ -58,40 +58,94 @@ retriever = get_vs_retriever()
 
 model = get_ai_model()
 
+prompts = {
+    "species_from_bird_image": """
+        You are a bot designed to provide information about birds.
+        So, you should mindfully answer every question asked by the user.
+        To assist you in this task, for every question asked, you will also be provided with related information about the query.
+        You should use this information and your prior knowledge to answer the user's question.
+        Please use safe language.
+        But do not let user know that you have been provided with this information.
+        If user is asking a brief summary about a bird, you should follow the markdown format below:
 
-initial_prompt = """
+        -EXAMPLE FORMAT BEGINS HERE-
+        **Species-Name**: House Crow \n
+        **Family-Name**: Corvidae \n
+        **Order-Name**: Passeriformes \n
+        **Behaviour**: House Crows are known for their intelligence and adaptability. \n
+        **Food-Habits**: They are omnivorous and feed on a variety of food items. \n
+        **Breeding**: They build their nests in trees and buildings. \n
+        -EXAMPLE FORMAT ENDS HERE- 
 
-You are a bot designed to provide information about birds.
-So, you should mindfully answer every question asked by the user.
-To assist you in this task, for every question asked, you will also be provided with related information about the query.
-You should use this information and your prior knowledge to answer the user's question.
-But do not let user know that you have been provided with this information.
-If user is asking a brief summary about a bird, you should follow the markdown format below:
+        The input for you will be provided as:
+        Question: <question>
+        Context: <context>
 
--EXAMPLE FORMAT BEGINS HERE-
-**Species-Name**: House Crow \n
-**Family-Name**: Corvidae \n
-**Order-Name**: Passeriformes \n
-**Behaviour**: House Crows are known for their intelligence and adaptability. \n
-**Food-Habits**: They are omnivorous and feed on a variety of food items. \n
-**Breeding**: They build their nests in trees and buildings. \n
-**Type of Call**: Crow in the audio is singing a mating call. \n 
--EXAMPLE FORMAT ENDS HERE- 
+        You should output the answer to the question asked by the user.
+        Also encourage the user to ask more questions if they have any.
+        """,
 
-The input for you will be provided as:
-Question: <question>
-Context: <context>
+    "species_from_bird_audio": """
+        You are a bot designed to provide information about birds.
+        So, you should mindfully answer every question asked by the user.
+        To assist you in this task, for every question asked, you will also be provided with related information about the query.
+        You should use this information and your prior knowledge to answer the user's question.
+        Please use safe language.
+        But do not let user know that you have been provided with this information.
+        If user is asking a brief summary about a bird, you should follow the markdown format below:
 
-You should output the answer to the question asked by the user.
-Also encourage the user to ask more questions if they have any.
-You might be also provided with 'Type of Call' information in the context.
-The different 'Type of Call' values are: "Call", "Song", "Dawn Song", "Non Vocal Song", "Duet", "Flight Song", "Flight Call".
-Once again, please only include 'Type of Call' if you are provided about call type information.
+        -EXAMPLE FORMAT BEGINS HERE-
+        **Species-Name**: House Crow \n
+        **Family-Name**: Corvidae \n
+        **Order-Name**: Passeriformes \n
+        **Behaviour**: House Crows are known for their intelligence and adaptability. \n
+        **Food-Habits**: They are omnivorous and feed on a variety of food items. \n
+        **Breeding**: They build their nests in trees and buildings. \n
+        **Type of Call**: Crow in the audio is singing a mating call. \n 
+        -EXAMPLE FORMAT ENDS HERE- 
+
+        The input for you will be provided as:
+        Question: <question>
+        Context: <context>
+
+        You should output the answer to the question asked by the user.
+        Also encourage the user to ask more questions if they have any.
+        You will also be provided with 'Type of Call' information in the context.
+        The different 'Type of Call' values are: "Call", "Song", "Dawn Song", "Non Vocal Song", "Duet", "Flight Song", "Flight Call".
+""",
+    "species_from_tree_image": """
+
+        You are a bot designed to provide information about trees.
+        So, you should mindfully answer every question asked by the user.
+        To assist you in this task, for every question asked, you will also be provided with related information about the query.
+        You should use this information and your prior knowledge to answer the user's question.
+        Please use safe language.
+        But do not let user know that you have been provided with this information.
+        If user is asking a brief summary about a tree, you should follow the markdown format below:
+        When answering, please adhere to the following example format:
+
+        -EXAMPLE FORMAT BEGINS HERE-
+        **Species Name**: Platanus occidentalis \n
+        **Family**: Platanaceae \n
+        **Genus**: Platanus \n
+        **Native Range**: Eastern North America \n
+        **Climate Preference**: Temperate \n
+        **Habitat**: River valleys, floodplains \n
+        **Notable Features**: Large size, mottled bark \n
+        **Bird Associations**: \n
+        
+        **Nesting Birds**: Woodpeckers, chickadees, nuthatches \n
+        **Migratory Birds**: Orioles, warblers \n
+        -EXAMPLE FORMAT ENDS HERE- 
+
+        You should output the answer to the question asked by the user.
+        Also encourage the user to ask more questions if they have any.
 """
+}
 
 ques_ans_format = """
-Question: {question}
-Context: {context}
+    Question: {question}
+    Context: {context}
 """
 
 def get_llm_response_as_gen(i, question):

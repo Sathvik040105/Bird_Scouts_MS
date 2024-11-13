@@ -11,7 +11,7 @@ hide_streamlit_style = """
             header {visibility: hidden;}
             </style>
             """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+# st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 def on_file_upload():
     st.session_state["file_uploaded"] = st.session_state["file_widget"]
