@@ -2,3 +2,8 @@
 showSidebarNavigation=false
 
 [theme]
+primaryColor = "#1E90FF"  # A shade of blue
+backgroundColor = "#0E1117"  # Dark background
+secondaryBackgroundColor = "#262730"  # Slightly lighter dark background
+textColor = "#FFFFFF"  # White text
+font = "sans serif"

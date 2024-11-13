@@ -7,6 +7,11 @@ last_name = st.session_state.user_state.get("last_name", "Default Value")
 # Below statement is only for debugging purposes
 # st.write("Written from how it works.py")
 
+# Function to navigate to a different page
+def navigate(page):
+    st.session_state.page = page
+    st.rerun()
+
 def change_password(user_name, current_password, new_password):
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
@@ -57,3 +62,15 @@ if st.session_state.show_change_password:
                 st.session_state.show_change_password = False
             else:
                 st.error("Current password is incorrect")
+
+if st.button("Sign Out"):
+    # Clear user state and navigate to login page
+    st.session_state.user_state = {
+        'first_name': '',
+        'last_name': '',
+        'user_name': '',
+        'password': '',
+        'logged_in': False
+    }
+
+    navigate('select')

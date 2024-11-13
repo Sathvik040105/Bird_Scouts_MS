@@ -1,8 +1,17 @@
 import streamlit as st
 import sqlite3
+from PIL import Image
 import base64
 
 # st.set_page_config(initial_sidebar_state='collapsed')
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 def on_file_upload():
     st.session_state["file_uploaded"] = st.session_state["file_widget"]
@@ -46,20 +55,63 @@ if 'user_state' not in st.session_state:
         'logged_in': False
     }
 
-def add_bg_from_file(file_path):
+def resize_and_encode_image(file_path, target_width, target_height):
+    # Open the image file
+    image = Image.open(file_path)
+    
+    # Resize the image to fit the target dimensions
+    image = image.resize((target_width, target_height), Image.LANCZOS)
+    
+    # Encode the resized image in base64
     with open(file_path, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read()).decode()
+    
+    return encoded_string
+
+def add_bg_from_file(file_path, key):
+    # Get the current window size
+    window_width = st.session_state.get("window_width", 1232)
+    window_height = st.session_state.get("window_height", 872)
+
+    # Initialize session state for backgrounds if not already done
+    if "backgrounds" not in st.session_state:
+        st.session_state["backgrounds"] = {}
+
+    # Check if the background for the given key is already stored in session state
+    if key not in st.session_state["backgrounds"]:
+        encoded_string = resize_and_encode_image(file_path, int(window_width), int(window_height))
+        st.session_state["backgrounds"][key] = encoded_string
+    else:
+        encoded_string = st.session_state["backgrounds"][key]
+
+    # Set the background image in Streamlit
     st.markdown(
-         f"""
-         <style>
-         .stApp {{
-             background-image: url("data:image/png;base64,{encoded_string}");
-             background-size: cover;
-         }}
-         </style>
-         """,
-         unsafe_allow_html=True
-     )
+        f"""
+        <style>
+        .stApp {{
+            background-image: url("data:image/png;base64,{encoded_string}");
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+st.markdown(
+    """
+    <script>
+    (function() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const streamlitWindowSize = {width: width, height: height};
+        window.parent.postMessage({type: 'streamlit:setComponentValue', value: streamlitWindowSize}, '*');
+    })();
+    </script>
+    """,
+    unsafe_allow_html=True
+)
 
 # Create navigation state
 if 'page' not in st.session_state:
@@ -72,39 +124,77 @@ def navigate(page):
 
 if not st.session_state.user_state['logged_in']:
     if st.session_state.page == 'select':
-        add_bg_from_file("free-jungle-border-clip-art-9.png")
+        # add_bg_from_file("clipart-border-background-13_optimized.png", key='background1')
+        add_bg_from_file("clipart-border-background-13.png", key='background1')
+        st.write("")  # Add vertical space
+        st.write("")
+        st.write("")
+        st.write("")  # Add vertical space
+        st.write("")
+        # st.write("")
+        # st.write("")  # Add vertical space
+        # st.write("")
+        col1, col2, col3 = st.columns([1, 8, 1])
+
+        st.markdown(
+            """
+            <style>
+            @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Pacifico&display=swap');
+
+            .big-font {
+                font-family: 'Pacifico', cursive;
+                font-size: 108.5px !important;
+            }
+            .large-font {
+                font-family: 'Dancing Script', cursive;
+                font-size: 30px !important;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+        with col2:
+            st.markdown('<p class="big-font">Bird Scouts</p>', unsafe_allow_html=True)
+
         # Center the buttons using columns
         col1, col2, col3 = st.columns([1, 2, 1])
         
         with col2:
-            st.write("")  # Add vertical space
-            st.write("")
-            st.write("")
-            st.write("")  # Add vertical space
-            st.write("")
-            st.write("")
-            st.write("")  # Add vertical space
-            st.write("")
-            st.write("")
-            st.write("")  # Add vertical space
-            st.write("")
-            st.write("")
+
+            # st.write("")
+            # st.write("")  # Add vertical space
+            # st.write("")
+            # st.write("")
             # st.write("")  # Add vertical space
             # st.write("")
             # st.write("")
             # st.write("")  # Add vertical space
             # st.write("")
             # st.write("")
-            st.title('Welcome!')
-            login = st.button('Login')
-            if login:
-                navigate('login')
-            signup = st.button('Sign Up')
-            if signup:
-                navigate('signup')
+
+            # st.title('Welcome!')
+            col11, col22, col33 = st.columns([1, 2, 1])
+            
+            with col22:
+                login = st.button('Login')
+                if login:
+                    navigate('login')
+                signup = st.button('Sign Up')
+                if signup:
+                    navigate('signup')
     # Create login form
     elif st.session_state.page == 'login':
         # add_bg_from_file("6697303051fa63258d4da4427ba167c1-crooked-tree-birds-silhouette-landscape.png")
+        add_bg_from_file("clipart-border-background-13.png", key='background2')
+        # add_bg_from_file("bg1_1700x850.jpg", key='background2')
+        # add_bg_from_file("88c95bb89b7811894a9f38661ba5f8ee.jpg", key='background2')
+
+        st.write("")  # Add vertical space
+        st.write("")
+        st.write("")
+        st.write("")
+        st.write("")
+        st.write("") 
         st.write('Enter Credentials:')
         user_name = st.text_input('User Name')
         password = st.text_input('Password', type='password')
@@ -132,6 +222,8 @@ if not st.session_state.user_state['logged_in']:
             navigate('select')
 
     elif st.session_state.page == 'signup':
+        # add_bg_from_file("bg1_1700x850.jpg", key='background3')
+        add_bg_from_file("clipart-border-background-13.png", key='background3')
         first_name = st.text_input('First Name')
         last_name = st.text_input('Last Name')
         user_name = st.text_input('Username')
