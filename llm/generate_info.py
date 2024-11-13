@@ -84,6 +84,8 @@ Context: <context>
 
 You should output the answer to the question asked by the user.
 Also encourage the user to ask more questions if they have any.
+You might be also provided with 'Type of Call' information in the context.
+The different 'Type of Call' values are: "Call", "Song", "Dawn Song", "Non Vocal Song", "Duet", "Flight Song", "Flight Call".
 Once again, please only include 'Type of Call' if you are provided about call type information.
 """
 

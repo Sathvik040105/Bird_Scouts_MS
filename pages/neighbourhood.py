@@ -21,8 +21,8 @@ def update_db():
     bird = st.session_state.selectbox
     latitude = st.session_state.latitude
     longitude = st.session_state.longitude
-    color = 'red'
-    query = f"INSERT INTO locations (name, latitude, longitude, color) VALUES ('{bird}', {latitude}, {longitude}, '{color}')"
+    username = st.session_state["user_state"].user_name
+    query = f"INSERT INTO locations (birdname, username, latitude, longitude) VALUES ('{bird}', '{username}', {latitude}, {longitude})"
     conn.execute(query)
     conn.commit()
 
@@ -47,7 +47,7 @@ view_state = pdk.ViewState(
 )
 
 tooltip = {
-    "html": "<b>{name}</b>",
+    "html": "<b>{birdname}</b><br><b>By: {username}</b>",
     "style": {
         "backgroundColor": "steelblue",
         "color": "white",
