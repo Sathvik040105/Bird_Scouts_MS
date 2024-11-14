@@ -8,19 +8,22 @@ import torchvision.models as models
 import torch
 import torch.nn as nn
 
+#Change device to CUDA
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
+#Object detection model
 def load_model():
     # Check if CUDA is available
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
     
-    # Load pre-trained YOLO model (using COCO weights)
-    model = detection.fasterrcnn_resnet50_fpn_v2(pretrained=True)
+    # Loaded a pretrained FasterCNN model for accurate object detection
+    model = detection.fasterrcnn_resnet50_fpn_v2(pretrained=True)#pretrained on COCO
     model.to(device)  # Move model to GPU if available
     model.eval()
     return model, device
 
+#Annotates the image
 def annotate_image(image, boxes, scores, labels, coco_classes, confidence_threshold=0.7):
     annotated_image = image.copy()
     draw = ImageDraw.Draw(annotated_image)
@@ -37,6 +40,7 @@ def annotate_image(image, boxes, scores, labels, coco_classes, confidence_thresh
     
     return annotated_image
 
+#Function that calls the object detection and annotation
 def detect_and_annotate_single_image(image_path, confidence_threshold=0.7):
     """
     Detect objects in an image, annotate the original image with bounding boxes, and return the annotated image
@@ -94,10 +98,14 @@ def detect_and_annotate_single_image(image_path, confidence_threshold=0.7):
     
     return annotated_image
 
+#Loaded a EfficientNetV3 model for species classification
 modeld = models.efficientnet_b3(pretrained=True)
+
+#Add a classifier layer at the end
 num_ftrs = modeld.classifier[1].in_features
 modeld.classifier[1] = nn.Linear(num_ftrs, 25)
 
+#Loaded the weights obtained through training 
 model_weights_path = './image/bird_image/best_model_FullTrainScratch.pth'
 modeld.load_state_dict(torch.load(model_weights_path, map_location=device))
 
