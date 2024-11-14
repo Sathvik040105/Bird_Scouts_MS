@@ -1,3 +1,5 @@
+# Aditya Manjunatha
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F#All activation functions are present here
