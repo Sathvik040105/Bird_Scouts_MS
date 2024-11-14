@@ -140,4 +140,3 @@ def predict_audio_class(audio_path):
         
         label = label_mapping[predicted.item()]
         return label
-
