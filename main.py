@@ -267,11 +267,11 @@ elif st.session_state.user_state['logged_in']:
 
     # Defining the pages
     pages = {
-        "home": st.Page("./pages/home.py", title="Home"),
-        "au": st.Page("./pages/about_us.py", title="About Us"),
-        "hiw": st.Page("./pages/profile.py", title="Profile"),
-        "result": st.Page("./pages/result.py", title="Result"),
-        "neigh": st.Page("./pages/neighbourhood.py", title="Neighbourhood")
+        "home": st.Page("./tabs/home.py", title="Home"),
+        "au": st.Page("./tabs/about_us.py", title="About Us"),
+        "hiw": st.Page("./tabs/profile.py", title="Profile"),
+        "result": st.Page("./tabs/result.py", title="Result"),
+        "neigh": st.Page("./tabs/neighbourhood.py", title="Neighbourhood")
     }
 
     page = st.navigation(list(pages.values()), position="hidden")

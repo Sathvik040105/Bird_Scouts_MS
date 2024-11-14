@@ -12,7 +12,7 @@ from google.generativeai.types.safety_types import HarmBlockThreshold, HarmCateg
 from langchain_chroma import Chroma
 import chromadb
 import streamlit as st
-from UI.llm.rag_wiki_pages import pages
+from llm.rag_wiki_pages import pages
 import bs4
 
 # Load the data from the chroma database
