@@ -183,7 +183,7 @@ if not st.session_state.user_state['logged_in']:
                     navigate('signup')
     # Create login form
     elif st.session_state.page == 'login':
-        add_bg_from_file("clipart-border-background-13.png", key='background2')
+        add_bg_from_file("./others/clipart-border-background-13.png", key='background2')
         st.write("")  # Add vertical space
         st.write("")
         st.write("")

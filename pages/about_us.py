@@ -15,17 +15,19 @@ linkedins = [
 
 githubs = [
     "https://github.com/Aditya-Manjunatha",
-    "https://github.com/ELNKrishna"
+    "https://github.com/ELNKrishna",
     "https://github.com/Nagasai561",
     "https://github.com/SanyatFale",
     "https://github.com/Sathvik040105",
     "https://github.com/OmegaSun18"
 ]
 
-for i in range(6):
-    with st.container(border=True):
-        col1, col2 = st.columns(2)
-        col1.markdown(f"**{members[i]}**")
-        col2.markdown(f"Github: {githubs[i]}\n")
-        col2.markdown(f"Email: {emails[i]}@iisc.ac.in\n")
-        col2.markdown(f"Linkedln: [{members[i]}]({linkedins[i]})")
+col1, col2 = st.columns(2)
+cols = [col1, col2]
+
+for i, col in enumerate(cols):
+    for j in range(3):
+        with col.container(border = True):
+            st.markdown(f"**{members[i*3+j]}**")
+            st.markdown(f"&nbsp; &nbsp; [Github]({githubs[i*3+j]}) &nbsp; &nbsp; [Email]({emails[i*3+j]}@iisc.ac.in) &nbsp; &nbsp; [Linkedln]({linkedins[i*3+j]})")
+            
