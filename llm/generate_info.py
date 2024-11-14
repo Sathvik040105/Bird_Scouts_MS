@@ -1,3 +1,5 @@
+# Written by Nagasai
+
 import os
 from dotenv import load_dotenv
 from langchain_google_genai import GoogleGenerativeAI
@@ -10,9 +12,12 @@ from google.generativeai.types.safety_types import HarmBlockThreshold, HarmCateg
 from langchain_chroma import Chroma
 import chromadb
 import streamlit as st
-from llm.bird_names import birds
+from UI.llm.rag_wiki_pages import pages
 import bs4
 
+# Load the data from the chroma database
+# If database is not present, create a new one
+# Return the retriever object
 @st.cache_resource
 def get_vs_retriever():
 
@@ -20,17 +25,20 @@ def get_vs_retriever():
     main_url = "https://en.wikipedia.org/wiki/{species}"
 
     if os.path.exists("./chromadb/chroma.sqlite3"):
-        chdb = Chroma(collection_name="birds_vs", embedding_function=embedding, persist_directory="./chromadb")
-        retriever = chdb.as_retriever(search_type="similarity", search_kwargs={"k": 6})
+        chdb = Chroma(collection_name="birds_vs",
+                      embedding_function=embedding, persist_directory="./chromadb")
+        retriever = chdb.as_retriever(
+            search_type="similarity", search_kwargs={"k": 6})
         return retriever
 
     loader = WebBaseLoader(
-        web_paths=[main_url.format(species=bird) for bird in birds],
+        web_paths=[main_url.format(species=bird) for bird in pages],
         bs_kwargs={"parse_only": bs4.SoupStrainer("p")}
     )
     docs = loader.load()
 
-    splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=200)
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1500, chunk_overlap=200)
     splits = splitter.split_documents(docs)
     vs = Chroma(
         collection_name="birds_vs",
@@ -38,26 +46,30 @@ def get_vs_retriever():
         persist_directory="./chromadb"
     )
     vs.add_documents(splits)
-    retriever = vs.as_retriever(search_type="similarity", search_kwargs={"k": 20})
+    retriever = vs.as_retriever(
+        search_type="similarity", search_kwargs={"k": 20})
 
     return retriever
 
 
 @st.cache_resource
 def get_ai_model():
-    model = GoogleGenerativeAI(model="gemini-1.5-flash", safety_settings = {
-       HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-         HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE
+    model = GoogleGenerativeAI(model="gemini-1.5-flash", safety_settings={
+        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE
     })
     return model
+
 
 load_dotenv()
 retriever = get_vs_retriever()
 
 model = get_ai_model()
 
+
+# Different prompt for different pipeline
 prompts = {
     "species_from_bird_image": """
         You are a bot designed to provide information about birds.
@@ -148,6 +160,7 @@ ques_ans_format = """
     Context: {context}
 """
 
+# Use this for streaming
 def get_llm_response_as_gen(i, question):
     extern_data = retriever.invoke(question)
     context = "".join([doc.page_content for doc in extern_data])
@@ -162,6 +175,7 @@ def get_llm_response_as_gen(i, question):
 
     return total_text
 
+# Use this for getting the response as text
 def get_llm_response_as_text(i, question):
     extern_data = retriever.invoke(question)
     context = "".join([doc.page_content for doc in extern_data])
@@ -171,4 +185,3 @@ def get_llm_response_as_text(i, question):
     response = model.invoke(st.session_state["history"][i][0])
     st.session_state["history"][i][0].pop()
     return response
-

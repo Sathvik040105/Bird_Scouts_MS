@@ -4,7 +4,7 @@ import pandas as pd
 import streamlit as st
 import pydeck as pdk
 import sqlite3
-from llm.bird_names import birds
+from UI.llm.rag_wiki_pages import birds
 
 iisc_center_coords = [13.024059, 77.566855]
 
