@@ -24,9 +24,13 @@ from PIL import Image
 import torchvision.models as models
 from torchvision.models import mobilenet_v3_large, MobileNet_V3_Large_Weights
 
+#Change device to CUDA
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
+#Load MobileNetv3 model for classification task
 model = models.mobilenet_v3_large(weights=models.MobileNet_V3_Large_Weights.DEFAULT)
+
+#Add classifier layer at the end
 num_classes = 50
 model.classifier = nn.Sequential(
     nn.Linear(in_features=960, out_features=1280),
@@ -35,7 +39,7 @@ model.classifier = nn.Sequential(
     nn.Linear(in_features=1280, out_features=num_classes)
 )
 
-
+#Load weights obtained during training stage
 model_weights_path = './image/leaf_image/best_model_FT_Last2Layer.pth'
 model.load_state_dict(torch.load(model_weights_path, map_location=device))
 
