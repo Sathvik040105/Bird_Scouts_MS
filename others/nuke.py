@@ -2,7 +2,7 @@
 import sqlite3
 
 # Connect to the SQLite database
-conn = sqlite3.connect('users.db')
+conn = sqlite3.connect('./sqlitedb/users.db')
 c = conn.cursor()
 
 # Delete all records from the users table

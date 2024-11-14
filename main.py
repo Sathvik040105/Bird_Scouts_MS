@@ -3,7 +3,7 @@ import sqlite3
 from PIL import Image
 import base64
 
-#Written by Shankar ----------------------------------------------
+# Written by Shankar ----------------------------------------------
 hide_streamlit_style = """
             <style>
             #MainMenu {visibility: hidden;}
@@ -13,13 +13,14 @@ hide_streamlit_style = """
             """
 # st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-def on_file_upload(): #Function written by Nagasai
+
+def on_file_upload():  # Function written by Nagasai
     st.session_state["file_uploaded"] = st.session_state["file_widget"]
     st.session_state["model_type"] = st.session_state["model_selectbox"]
 
-    
-# Initialize SQLite database 
-conn = sqlite3.connect('users.db')
+
+# Initialize SQLite database
+conn = sqlite3.connect('./sqlitedb/users.db')
 c = conn.cursor()
 
 c.execute('''
@@ -33,6 +34,8 @@ c.execute('''
 conn.commit()
 
 # Function to add a new user to the database
+
+
 def add_user(first_name, last_name, user_name, password):
     c.execute('''
         INSERT INTO users (first_name, last_name, user_name, password)
@@ -41,9 +44,12 @@ def add_user(first_name, last_name, user_name, password):
     conn.commit()
 
 # Function to get user details from the database
+
+
 def get_user(user_name):
     c.execute('SELECT * FROM users WHERE user_name = ?', (user_name,))
     return c.fetchone()
+
 
 # Create user_state
 if 'user_state' not in st.session_state:
@@ -55,18 +61,20 @@ if 'user_state' not in st.session_state:
         'logged_in': False
     }
 
+
 def resize_and_encode_image(file_path, target_width, target_height):
     # Open the image file
     image = Image.open(file_path)
-    
+
     # Resize the image to fit the target dimensions
     image = image.resize((target_width, target_height), Image.LANCZOS)
-    
+
     # Encode the resized image in base64
     with open(file_path, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read()).decode()
-    
+
     return encoded_string
+
 
 def add_bg_from_file(file_path, key):
     # Get the current window size
@@ -79,7 +87,8 @@ def add_bg_from_file(file_path, key):
 
     # Check if the background for the given key is already stored in session state
     if key not in st.session_state["backgrounds"]:
-        encoded_string = resize_and_encode_image(file_path, int(window_width), int(window_height))
+        encoded_string = resize_and_encode_image(
+            file_path, int(window_width), int(window_height))
         st.session_state["backgrounds"][key] = encoded_string
     else:
         encoded_string = st.session_state["backgrounds"][key]
@@ -98,6 +107,7 @@ def add_bg_from_file(file_path, key):
         """,
         unsafe_allow_html=True
     )
+
 
 st.markdown(
     """
@@ -118,13 +128,17 @@ if 'page' not in st.session_state:
     st.session_state.page = 'select'
 
 # Function to navigate to a different page
+
+
 def navigate(page):
     st.session_state.page = page
     st.rerun()
 
+
 if not st.session_state.user_state['logged_in']:
     if st.session_state.page == 'select':
-        add_bg_from_file("clipart-border-background-13.png", key='background1')
+        add_bg_from_file(
+            "./others/clipart-border-background-13.png", key='background1')
         st.write("")  # Add vertical space
         st.write("")
         st.write("")
@@ -150,15 +164,16 @@ if not st.session_state.user_state['logged_in']:
             unsafe_allow_html=True
         )
         with col2:
-            st.markdown('<p class="big-font">Bird Scouts</p>', unsafe_allow_html=True)
+            st.markdown('<p class="big-font">Bird Scouts</p>',
+                        unsafe_allow_html=True)
 
         # Center the buttons using columns
         col1, col2, col3 = st.columns([1, 2, 1])
-        
+
         with col2:
 
             col11, col22, col33 = st.columns([1, 2, 1])
-            
+
             with col22:
                 login = st.button('Login')
                 if login:
@@ -174,7 +189,7 @@ if not st.session_state.user_state['logged_in']:
         st.write("")
         st.write("")
         st.write("")
-        st.write("") 
+        st.write("")
         st.write('Enter Credentials:')
         user_name = st.text_input('User Name')
         password = st.text_input('Password', type='password')
@@ -191,8 +206,10 @@ if not st.session_state.user_state['logged_in']:
                     st.session_state.user_state['user_name'] = user_name
                     st.session_state.user_state['password'] = password
                     st.session_state.user_state['logged_in'] = True
-                    st.session_state.user_state['first_name'] = user[0]  # user[0] is the first_name field
-                    st.session_state.user_state['last_name'] = user[1]  # user[1] is the last_name field
+                    # user[0] is the first_name field
+                    st.session_state.user_state['first_name'] = user[0]
+                    # user[1] is the last_name field
+                    st.session_state.user_state['last_name'] = user[1]
                     st.write('Logging In')
                     st.rerun()
                 else:
@@ -222,17 +239,19 @@ if not st.session_state.user_state['logged_in']:
                 add_user(first_name, last_name, user_name, password)
                 st.success('User registered successfully. Please login.')
                 navigate('select')
-    
+
         if back:
             navigate('select')
-#End of Shankar's code ----------------------------------------------
-#Written by Nagasai -------------------------------------------------
+# End of Shankar's code ----------------------------------------------
+
+
+# Written by Nagasai -------------------------------------------------
 elif st.session_state.user_state['logged_in']:
     # Declaring some keys in the session state
     if "file_uploaded" not in st.session_state:
         st.session_state["file_uploaded"] = None
     # History is list, each item corresponds to a unique chat
-    # Each item has two lists, 
+    # Each item has two lists,
     # The first list has the chat history
     # Second list has format and resources i.e image/audio
     if "history" not in st.session_state:
@@ -250,7 +269,7 @@ elif st.session_state.user_state['logged_in']:
     pages = {
         "home": st.Page("./pages/home.py", title="Home"),
         "au": st.Page("./pages/about_us.py", title="About Us"),
-        "hiw": st.Page("./pages/how_it_works.py", title="Profile"),
+        "hiw": st.Page("./pages/profile.py", title="Profile"),
         "result": st.Page("./pages/result.py", title="Result"),
         "neigh": st.Page("./pages/neighbourhood.py", title="Neighbourhood")
     }
@@ -263,15 +282,6 @@ elif st.session_state.user_state['logged_in']:
         st.page_link(pages["au"])
         st.page_link(pages["hiw"])
         st.page_link(pages["neigh"])
-        
-        # st.divider()
-        # st.selectbox("Select Model", [
-        #     "Bird Image",
-        #     "Bird Audio",
-        #     "Feather Image"
-        # ], key="model_selectbox", placeholder=st.session_state["model_type"])
-        # file = st.file_uploader("Upload Image/Audio", key="file_widget", on_change=on_file_upload)
-        # st.divider()
 
         st.divider()
         with st.form(key="model select"):
@@ -282,7 +292,7 @@ elif st.session_state.user_state['logged_in']:
                 "Leaf Image",
                 "Trunk Image"
             ], key="model_selectbox", placeholder=st.session_state["model_type"])
-            file = st.file_uploader("Upload Image/Audio", key = "file_widget")
+            file = st.file_uploader("Upload Image/Audio", key="file_widget")
             st.form_submit_button("Predict!", on_click=on_file_upload)
         st.divider()
 
@@ -299,4 +309,4 @@ elif st.session_state.user_state['logged_in']:
         if page != pages['result']:
             st.switch_page(pages["result"])
     page.run()
-#End of Nagasai's code ----------------------------------------------
+# End of Nagasai's code ----------------------------------------------

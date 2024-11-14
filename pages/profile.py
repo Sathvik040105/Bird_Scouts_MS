@@ -1,4 +1,6 @@
-#Written by Shankar to create a profile page for the user where the user can change his password and sign out if required
+# Written by Shankar 
+# This code creates a profile page for the user where the user can change his password and sign out if required
+
 import streamlit as st
 import sqlite3
 
@@ -9,17 +11,21 @@ last_name = st.session_state.user_state.get("last_name", "Default Value")
 # st.write("Written from how it works.py")
 
 # Function to navigate to a different page
+
+
 def navigate(page):
     st.session_state.page = page
     st.rerun()
 
+
 def change_password(user_name, current_password, new_password):
-    conn = sqlite3.connect('users.db')
+    conn = sqlite3.connect('./sqlitedb/users.db')
     c = conn.cursor()
     c.execute('SELECT password FROM users WHERE user_name = ?', (user_name,))
     stored_password = c.fetchone()[0]
     if stored_password == current_password:
-        c.execute('UPDATE users SET password = ? WHERE user_name = ?', (new_password, user_name))
+        c.execute('UPDATE users SET password = ? WHERE user_name = ?',
+                  (new_password, user_name))
         conn.commit()
         conn.close()
         return True
@@ -47,7 +53,8 @@ if st.session_state.show_change_password:
     st.write("## Change Password")
     current_password = st.text_input("Current Password", type="password")
     new_password = st.text_input("New Password", type="password")
-    confirm_new_password = st.text_input("Confirm New Password", type="password")
+    confirm_new_password = st.text_input(
+        "Confirm New Password", type="password")
     change_password_button = st.button("Submit")
 
     if change_password_button:
