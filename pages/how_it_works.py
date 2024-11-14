@@ -1,3 +1,4 @@
+#Written by Shankar to create a profile page for the user where the user can change his password and sign out if required
 import streamlit as st
 import sqlite3
 
