@@ -3,7 +3,7 @@ import sqlite3
 from PIL import Image
 import base64
 
-# st.set_page_config(initial_sidebar_state='collapsed')
+#Written by Shankar ----------------------------------------------
 hide_streamlit_style = """
             <style>
             #MainMenu {visibility: hidden;}
@@ -13,7 +13,7 @@ hide_streamlit_style = """
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-def on_file_upload():
+def on_file_upload(): #Function written by Nagasai
     st.session_state["file_uploaded"] = st.session_state["file_widget"]
     st.session_state["model_type"] = st.session_state["model_selectbox"]
 
@@ -124,16 +124,12 @@ def navigate(page):
 
 if not st.session_state.user_state['logged_in']:
     if st.session_state.page == 'select':
-        # add_bg_from_file("clipart-border-background-13_optimized.png", key='background1')
         add_bg_from_file("clipart-border-background-13.png", key='background1')
         st.write("")  # Add vertical space
         st.write("")
         st.write("")
         st.write("")  # Add vertical space
         st.write("")
-        # st.write("")
-        # st.write("")  # Add vertical space
-        # st.write("")
         col1, col2, col3 = st.columns([1, 8, 1])
 
         st.markdown(
@@ -161,18 +157,6 @@ if not st.session_state.user_state['logged_in']:
         
         with col2:
 
-            # st.write("")
-            # st.write("")  # Add vertical space
-            # st.write("")
-            # st.write("")
-            # st.write("")  # Add vertical space
-            # st.write("")
-            # st.write("")
-            # st.write("")  # Add vertical space
-            # st.write("")
-            # st.write("")
-
-            # st.title('Welcome!')
             col11, col22, col33 = st.columns([1, 2, 1])
             
             with col22:
@@ -184,11 +168,7 @@ if not st.session_state.user_state['logged_in']:
                     navigate('signup')
     # Create login form
     elif st.session_state.page == 'login':
-        # add_bg_from_file("6697303051fa63258d4da4427ba167c1-crooked-tree-birds-silhouette-landscape.png")
         add_bg_from_file("clipart-border-background-13.png", key='background2')
-        # add_bg_from_file("bg1_1700x850.jpg", key='background2')
-        # add_bg_from_file("88c95bb89b7811894a9f38661ba5f8ee.jpg", key='background2')
-
         st.write("")  # Add vertical space
         st.write("")
         st.write("")
@@ -222,7 +202,6 @@ if not st.session_state.user_state['logged_in']:
             navigate('select')
 
     elif st.session_state.page == 'signup':
-        # add_bg_from_file("bg1_1700x850.jpg", key='background3')
         add_bg_from_file("clipart-border-background-13.png", key='background3')
         first_name = st.text_input('First Name')
         last_name = st.text_input('Last Name')
@@ -246,6 +225,8 @@ if not st.session_state.user_state['logged_in']:
     
         if back:
             navigate('select')
+#End of Shankar's code ----------------------------------------------
+#Written by Nagasai -------------------------------------------------
 elif st.session_state.user_state['logged_in']:
     # Declaring some keys in the session state
     if "file_uploaded" not in st.session_state:
@@ -318,3 +299,4 @@ elif st.session_state.user_state['logged_in']:
         if page != pages['result']:
             st.switch_page(pages["result"])
     page.run()
+#End of Nagasai's code ----------------------------------------------

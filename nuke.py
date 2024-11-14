@@ -1,3 +1,4 @@
+#Written By Shankar to clear the User Authentication Database
 import sqlite3
 
 # Connect to the SQLite database
