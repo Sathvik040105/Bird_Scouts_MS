@@ -144,10 +144,6 @@ prompts = {
         **Climate Preference**: Temperate \n
         **Habitat**: River valleys, floodplains \n
         **Notable Features**: Large size, mottled bark \n
-        **Bird Associations**: \n
-        
-        **Nesting Birds**: Woodpeckers, chickadees, nuthatches \n
-        **Migratory Birds**: Orioles, warblers \n
         -EXAMPLE FORMAT ENDS HERE- 
 
         You should output the answer to the question asked by the user.

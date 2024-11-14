@@ -4,7 +4,7 @@ import pandas as pd
 import streamlit as st
 import pydeck as pdk
 import sqlite3
-from UI.llm.rag_wiki_pages import birds
+from llm.rag_wiki_pages import pages
 
 iisc_center_coords = [13.024059, 77.566855]
 
@@ -28,9 +28,8 @@ def update_db():
     bird = st.session_state.selectbox
     latitude = st.session_state.latitude
     longitude = st.session_state.longitude
-    username = st.session_state["user_state"].user_name
-    query = f"INSERT INTO locations (birdname, username, latitude, longitude) VALUES ('{
-        bird}', '{username}', {latitude}, {longitude})"
+    username = st.session_state["user_state"]["user_name"]
+    query = f"INSERT INTO locations (birdname, username, latitude, longitude) VALUES ('{bird}', '{username}', {latitude}, {longitude})"
     conn.execute(query)
     conn.commit()
 
@@ -77,7 +76,7 @@ st.pydeck_chart(pdk.Deck(
 
 # Form to add a new location
 with st.form("Location Form"):
-    st.selectbox("Select a bird", birds, key="selectbox")
+    st.selectbox("Select a bird", pages, key="selectbox")
     st.number_input("Latitude", key="latitude", format="%0.4f",
                     min_value=-90.0, max_value=90.0, step=0.0001, value=13.024)
     st.number_input("Longitude", key="longitude", format="%0.4f",
