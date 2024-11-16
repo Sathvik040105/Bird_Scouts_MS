@@ -28,3 +28,4 @@ dependencies:
     - langchain_community
     - langchain_chroma
     - bs4
+    - google-cloud-aiplatform
