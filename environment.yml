@@ -1,5 +1,6 @@
 name: bird_scouts
 channels:
+  - pytorch  # Prioritize PyTorch's official channel for compatibility
   - conda-forge
   - defaults
 dependencies:
@@ -8,25 +9,27 @@ dependencies:
   - pandas
   - scikit-learn
   - matplotlib
-  - pytorch::pytorch=2.5.1
-  - pytorch::torchvision=0.15.2  # Matched version of torchvision with pytorch
-  - pytorch::torchaudio=2.5.1   # Matched version of torchaudio with pytorch
+  - pytorch=2.5.1          # Specify exact version for PyTorch
+  - torchvision=0.15.2     # Matched version for torchvision
+  - torchaudio=2.5.1       # Matched version for torchaudio
+  - cudatoolkit=11.8       # Match CUDA version (if using GPU)
   - pip
   - pip:
-    - streamlit
-    - langchain
-    - chromadb
-    - fastapi
-    - uvicorn
-    - google-generativeai
-    - librosa
-    - opencv-python
-    - opentelemetry-api
-    - pydantic
-    - python-dotenv
-    - langchain_google_genai
-    - langchain_community
-    - langchain_chroma
-    - bs4
-    - google-cloud-aiplatform
+      - streamlit
+      - langchain
+      - chromadb
+      - fastapi
+      - uvicorn
+      - google-generativeai
+      - librosa
+      - opencv-python
+      - opentelemetry-api
+      - pydantic
+      - python-dotenv
+      - langchain_google_genai
+      - langchain_community
+      - langchain_chroma
+      - bs4
+      - google-cloud-aiplatform
+
 
