@@ -9,8 +9,8 @@ dependencies:
   - scikit-learn
   - matplotlib
   - pytorch::pytorch=2.5.1
-  - pytorch::torchvision
-  - pytorch::torchaudio
+  - pytorch::torchvision=0.15.2  # Matched version of torchvision with pytorch
+  - pytorch::torchaudio=2.5.1   # Matched version of torchaudio with pytorch
   - pip
   - pip:
     - streamlit
@@ -29,3 +29,4 @@ dependencies:
     - langchain_chroma
     - bs4
     - google-cloud-aiplatform
+
