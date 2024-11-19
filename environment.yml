@@ -1,36 +1,36 @@
 name: bird_scouts
 channels:
   - pytorch
+  - nvidia
   - conda-forge
   - defaults
 dependencies:
-  - python=3.10
-  - numpy
-  - pandas
-  - scikit-learn
-  - matplotlib
-  - pytorch=2.5.1
-  - torchvision=0.16.0  # Compatible version for PyTorch 2.5.1
-  - torchaudio=2.5.1
-  - cudatoolkit=11.8     # Match CUDA version
+  - python=3.10.12
+  - numpy=1.24.3
+  - pandas=2.0.3
+  - scikit-learn=1.3.0
+  - matplotlib=3.7.2
+  - pytorch=2.0.1
+  - torchvision=0.15.2
+  - torchaudio=2.0.2
+  - cudatoolkit=11.8
   - mesa-libgl-cos7-x86_64
-  - pip
+  - pip=23.2.1
   - pip:
-      - streamlit
-      - langchain
-      - chromadb
-      - fastapi
-      - uvicorn
-      - google-generativeai
-      - librosa
-      - opencv-python-headless
-      - opentelemetry-api
-      - pydantic
-      - python-dotenv
-      - langchain_google_genai
-      - langchain_community
-      - langchain_chroma
-      - bs4
-      - google-cloud-aiplatform
-
+      - streamlit==1.29.0
+      - langchain==0.0.350
+      - chromadb==0.4.18
+      - fastapi==0.104.1
+      - uvicorn==0.24.0
+      - google-generativeai==0.3.1
+      - librosa==0.10.1
+      - opencv-python-headless==4.8.1.78
+      - opentelemetry-api==1.21.0
+      - pydantic==2.5.2
+      - python-dotenv==1.0.0
+      - langchain_google_genai==0.0.5
+      - langchain_community==0.0.13
+      - langchain_chroma==0.0.10
+      - beautifulsoup4==4.12.2
+      - google-cloud-aiplatform==1.36.4
 
