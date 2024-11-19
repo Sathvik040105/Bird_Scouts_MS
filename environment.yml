@@ -31,8 +31,5 @@ dependencies:
       - langchain_google_genai==0.0.5
       - langchain_community==0.0.13
       - langchain_chroma==0.0.10
-      - beautifulsoup4==4.12.2
+      - bs4
       - google-cloud-aiplatform==1.36.4
-
-
-
