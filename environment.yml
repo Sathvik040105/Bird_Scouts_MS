@@ -18,6 +18,7 @@ dependencies:
   - pip=23.2.1
   - pip:
       - streamlit==1.29.0
+      - pillow
       - opencv-python
       - langchain==0.0.350
       - chromadb==0.4.18
