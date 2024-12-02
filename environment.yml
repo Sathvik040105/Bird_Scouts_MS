@@ -18,6 +18,7 @@ dependencies:
   - pip=23.2.1
   - pip:
       - streamlit==1.29.0
+      - librosa
       - pillow
       - opencv-python
       - langchain==0.0.350
@@ -25,7 +26,6 @@ dependencies:
       - fastapi==0.104.1
       - uvicorn==0.24.0
       - google-generativeai==0.3.1
-      - librosa==0.10.1
       - opentelemetry-api==1.21.0
       - pydantic==2.5.2
       - python-dotenv==1.0.0
