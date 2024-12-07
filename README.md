@@ -5,7 +5,8 @@ It also includes a tree species identification feature and a collaborative commu
 
  
 This project is part of *UMC 301 - Applied Data Science and Artificial Intelligence* course at IISc.
-+ **[Demo video link](https://indianinstituteofscience-my.sharepoint.com/:v:/g/personal/nagasaij_iisc_ac_in/Ec0ji2QwpAREn-ThuikHNl0BEfDJHYxAYiorULIpwXcSMg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=9w0xPp)**
+<!-- + **[Demo video link](https://indianinstituteofscience-my.sharepoint.com/:v:/g/personal/nagasaij_iisc_ac_in/Ec0ji2QwpAREn-ThuikHNl0BEfDJHYxAYiorULIpwXcSMg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=9w0xPp)** -->
+[![Watch the video](https://raw.githubusercontent.com/Nagasai561/Bird_Scouts/video-embed/others/clipart-border-background-13.png)](https://raw.githubusercontent.com/Nagasai561/Bird_Scouts/video-embed/others/Bird_scouts_demo.webm)
 + **[Presentation slides](https://docs.google.com/presentation/d/1AmpiQddBaHowNwmOWfrJYQHjGgEAjgNN2WpIVIsTEwI/edit#slide=id.g3176ed11d7c_1_21)**
 
 
