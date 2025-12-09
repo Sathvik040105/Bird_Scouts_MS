@@ -38,7 +38,6 @@ def mtl_species_classi(file_path):
         
         # Short-Time Fourier Transform(STFT) parameters
         nfft = 2028       # The number of points in the FFT
-        window = 2048
         hop_length = audio_len // (img_size[1] - 1)
         fmin = 20
         fmax = 16000
