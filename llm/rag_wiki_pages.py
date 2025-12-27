@@ -1,4 +1,4 @@
-# Written by Nagasi
+# Written by Nagasai
 
 # List of all the wiki pages that are used in the RAG dataset
 pages = [

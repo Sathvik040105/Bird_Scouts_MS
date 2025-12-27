@@ -6,6 +6,8 @@ from torchvision.models import EfficientNet_B0_Weights
 import torchvision.models
 import streamlit as st
 from io import BytesIO
+import librosa
+import io
 
 mel_spec_params = {
     "sample_rate": 32000,
@@ -87,10 +89,15 @@ def normalize_melspec(X, eps=1e-6):
 
 # Function to read and resample wav file
 def read_wav(path):
-    wav, org_sr = torchaudio.load(BytesIO(path.getvalue()), normalize=True)
-    wav = torchaudio.functional.resample(wav, orig_freq=org_sr, new_freq=mel_spec_params["sample_rate"])
-    wav = wav.to(device)  # Move tensor to GPU
-    return wav
+    if hasattr(path, 'getvalue'):
+        audio, org_sr = librosa.load(io.BytesIO(path.getvalue()), sr=None)
+    else:
+        audio, org_sr = librosa.load(path, sr=None)
+    audio = torch.tensor(audio).float()
+    if audio.dim() == 1:
+        audio = audio.unsqueeze(0)
+    audio = torchaudio.functional.resample(audio, orig_freq=org_sr, new_freq=mel_spec_params['sample_rate'])
+    return audio
 
 # Preprocess audio file for inference
 def preprocess_audio(audio_path):

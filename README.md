@@ -25,6 +25,54 @@ https://github.com/user-attachments/assets/2128beef-d2aa-4c4e-8204-81ab82dabe53
     - Collaborate with other users to track bird populations and habitats across regions.
 
 
+### Setup
+
+#### Prerequisites
+- Python 3.10 or higher
+- pip (Python package installer)
+
+#### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/Bird_Scouts_MS.git
+   cd Bird_Scouts_MS
+   ```
+
+2. Create a virtual environment (recommended):
+   ```bash
+   python3 -m venv .venv
+   ```
+
+3. Activate the virtual environment:
+   - On Windows: `.venv\Scripts\activate`
+   - On macOS/Linux: `source .venv/bin/activate`
+
+4. Install the required dependencies:
+   ```bash
+   pip3 install -r requirements.txt
+   ```
+
+#### Running Locally
+To run the application locally:
+```bash
+streamlit run main.py
+```
+This will start the Streamlit web app on your local machine (usually at `http://localhost:8501`).
+
+#### Training Models
+To retrain the models, you will need the appropriate datasets (the original training datasets are not included in this repository due to size constraints). The training code is provided in the `training_files/` directory.
+
+Navigate to the `training_files/` directory and run the respective Jupyter notebooks or Python scripts. Ensure you have Jupyter Notebook installed (`pip install jupyter` if needed).
+
+- Bird call classification: Run `jupyter notebook birdcalltraining_audio.ipynb`
+- Species identification from audio: Run `jupyter notebook species_identification_audio.ipynb`
+- Bird image classification: Run `jupyter notebook Bird_image_AdityaM.ipynb`
+- Feather image classification: Run `jupyter notebook feather_AdityaM.ipynb`
+- Bark/trunk image classification: Run `python bark_MobileNetv3.py`
+- Leaf image classification: Run `python leaves.py`
+
+Note: Training requires significant computational resources (preferably with GPU support for PyTorch models). You may need to adapt the data paths in the scripts to point to your local datasets. The notebooks were originally designed for Kaggle environments with specific dataset paths.
+
 ### Contributions
 
 | Name | Contribution | GitHub Profile |

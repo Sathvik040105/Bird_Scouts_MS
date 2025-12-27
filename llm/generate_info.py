@@ -1,19 +1,15 @@
 # Written by Nagasai
 
 import os
-from dotenv import load_dotenv
-from langchain_google_genai import GoogleGenerativeAI
-from langchain_google_genai.embeddings import GoogleGenerativeAIEmbeddings
 from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
 from langchain_core.prompts import PromptTemplate
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from google.generativeai.types.safety_types import HarmBlockThreshold, HarmCategory
 from langchain_chroma import Chroma
-import chromadb
 import streamlit as st
 from llm.rag_wiki_pages import pages
 import bs4
+from langchain_ollama import OllamaEmbeddings, ChatOllama
 
 # Load the data from the chroma database
 # If database is not present, create a new one
@@ -21,7 +17,7 @@ import bs4
 @st.cache_resource
 def get_vs_retriever():
 
-    embedding = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+    embedding = OllamaEmbeddings(model="nomic-embed-text")
     main_url = "https://en.wikipedia.org/wiki/{species}"
 
     if os.path.exists("./chromadb/chroma.sqlite3"):
@@ -54,16 +50,9 @@ def get_vs_retriever():
 
 @st.cache_resource
 def get_ai_model():
-    model = GoogleGenerativeAI(model="gemini-1.5-flash", safety_settings={
-        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE
-    })
+    model = ChatOllama(model="llama3.2")
     return model
 
-
-load_dotenv()
 retriever = get_vs_retriever()
 
 model = get_ai_model()
@@ -136,7 +125,6 @@ prompts = {
         If user is asking a brief summary about a tree, you should follow the markdown format below:
         When answering, please adhere to the following example format:
 
-        -EXAMPLE FORMAT BEGINS HERE-
         **Species Name**: Platanus occidentalis \n
         **Family**: Platanaceae \n
         **Genus**: Platanus \n
@@ -165,8 +153,8 @@ def get_llm_response_as_gen(i, question):
     response = model.stream(st.session_state["history"][i][0])
     total_text = ""
     for chunk in response:
-        total_text += chunk
-        yield chunk
+        total_text += chunk.content
+        yield chunk.content
     st.session_state["history"][i][0].pop()
 
     return total_text

@@ -95,6 +95,7 @@ def mtl_species_classi(file_path):
     model_infer.load_state_dict(state_dict)
 
     # Set the model to evaluation mode
+    model_infer = model_infer.double()
     model_infer.eval()
 
     def build_decoder_inference(dim=5*32000):
@@ -158,6 +159,7 @@ def mtl_species_classi(file_path):
     plot = plot_mel_spec(audio_data)
 
     with torch.no_grad():
+        audio_data = audio_data.double()
         species_preds, _, _ = model_infer(audio_data)
         species_probs = F.softmax(species_preds, dim=1)
             

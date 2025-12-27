@@ -1,0 +1,13 @@
+streamlit
+matplotlib
+librosa
+pillow
+langchain
+chromadb
+langchain_community
+langchain_chroma
+bs4
+torch
+torchvision
+torchaudio
+langchain_ollama
